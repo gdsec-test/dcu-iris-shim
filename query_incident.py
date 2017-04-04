@@ -1,7 +1,7 @@
 import HTMLParser
 import logging
-import suds.client
 import re
+import suds.client
 
 
 class QueryIncident:
@@ -20,8 +20,10 @@ class QueryIncident:
         # Get ticket text as string
         notes_text = self._client.service.GetIncidentCustomerNotes(incident, 0)
         # Get reporter email address
-        xml_string = suds.sax.text.Raw("<ns0:IncidentId>" + str(incident) + "</ns0:IncidentId>")
-        incident_info = self._client.service.GetIncidentInfoByIncidentId(xml_string)
+        xml_string = suds.sax.text.Raw("<ns0:IncidentId>" + str(incident) +
+                                       "</ns0:IncidentId>")
+        incident_info = self._client.service.GetIncidentInfoByIncidentId(
+            xml_string)
         self._logger.debug('Ticket info: %s', incident_info)
         # Decode any HTML Entities characters
         h = HTMLParser.HTMLParser()
@@ -30,3 +32,21 @@ class QueryIncident:
         p = re.compile(r'<.*?>')
         notes_text = p.sub('', notes_text)
         return incident_info, notes_text
+
+    def close_incident(self, incident):
+        try:
+            self._client.service.AddIncidentNote(
+                incident,
+                "This ticket has been closed by Phishstory. Phishtory is "
+                " maintained by the Digital Crimes Unit - Engineers. An email"
+                " has been sent to the address on the ticket via the email"
+                " messaging system. If you have any issues or questions please"
+                " contact a member of the Digital Crimes Unit Engineers via"
+                " Lync/Slack or email dcu@", 'phishtory')
+            # NTLogin was misspelled when added to IRIS, above mispelling is intentional due to that
+            self._client.service.QuickCloseIncident(
+                incident,
+                15550,)
+            self._logger.info("%s closed successfully", incident)
+        except Exception as e:
+            self._logger.error("Auto Close failed on IID: %s, %s", incident, e)
