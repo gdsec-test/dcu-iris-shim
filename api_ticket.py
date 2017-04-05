@@ -11,6 +11,7 @@ class APITicket:
 
     # Constructor expects to receive an environment string variable of 'dev' or 'ote'
     def __init__(self, environment):
+        self._logger = logging.getLogger(__name__)
         if environment not in ('dev', 'ote'):
             environment = 'dev'
         self._url = self.URL.get(environment)
@@ -25,8 +26,8 @@ class APITicket:
             payload = {
                 "type": dict_of_values.get('type'),
                 "source": dict_of_values.get('url'),
+                "info": 'iid:{}'.format(dict_of_values.get('iid'))
             }
             return requests.post(self._url, json=payload, headers=headers)
         except Exception as e:
-            print 'Error posting ticket for {}: {}', format(dict_of_values.get('url'), e.message)
-
+            self._logger.error('Error posting ticket for {}: {}', format(dict_of_values.get('url'), e.message))

@@ -1,2 +1,4 @@
 suds
+pyyaml
 pyodbc
+requests
