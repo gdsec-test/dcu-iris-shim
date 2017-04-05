@@ -44,5 +44,3 @@ class QueryIris:
             self._logger.error("Unable to run query {}".format(e))
         finally:
             return incidents
-
-

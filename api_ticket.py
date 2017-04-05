@@ -26,8 +26,8 @@ class APITicket:
             payload = {
                 "type": dict_of_values.get('type'),
                 "source": dict_of_values.get('url'),
+                "info": 'iid:{}'.format(dict_of_values.get('iid'))
             }
             return requests.post(self._url, json=payload, headers=headers)
         except Exception as e:
-            self.logger.error('Error posting ticket for {}: {}', format(dict_of_values.get('url'), e.message))
-
+            self._logger.error('Error posting ticket for {}: {}', format(dict_of_values.get('url'), e.message))
