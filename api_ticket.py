@@ -26,7 +26,11 @@ class APITicket:
             payload = {
                 "type": dict_of_values.get('type'),
                 "source": dict_of_values.get('url'),
-                "info": 'iid:{}'.format(dict_of_values.get('iid'))
+                "metadata": {
+                    'iris_id': dict_of_values.get('iid'),
+                    'iris_reporter': dict_of_values.get('email'),
+                    'iris_created': dict_of_values.get('create_date')
+                }
             }
             return requests.post(self._url, json=payload, headers=headers)
         except Exception as e:
