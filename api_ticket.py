@@ -5,14 +5,15 @@ import logging
 class APITicket:
 
     URL = {
-        'dev': 'http://abuse.api.int.dev-godaddy.com/v1/abuse/tickets',
-        'ote': 'http://abuse.api.int.ote-godaddy.com/v1/abuse/tickets '
+        'dev': 'http://api.dev-godaddy.com/v1/abuse/tickets',
+        'ote': 'https://api.ote-godaddy.com/v1/abuse/tickets',
+        'prod': 'https://api.godaddy.com/v1/abuse/tickets'
     }
 
     # Constructor expects to receive an environment string variable of 'dev' or 'ote'
     def __init__(self, environment):
         self._logger = logging.getLogger(__name__)
-        if environment not in ('dev', 'ote'):
+        if environment not in ('dev', 'ote', 'prod'):
             environment = 'dev'
         self._url = self.URL.get(environment)
 
@@ -29,9 +30,9 @@ class APITicket:
                 "metadata": {
                     'iris_id': dict_of_values.get('iid'),
                     'iris_reporter': dict_of_values.get('email'),
-                    'iris_created': dict_of_values.get('create_date')
+                    'iris_created': dict_of_values.get('create_date').strftime("%Y-%m-%d %H:%M:%S")
                 }
             }
             return requests.post(self._url, json=payload, headers=headers)
         except Exception as e:
-            self._logger.error('Error posting ticket for {}: {}', format(dict_of_values.get('url'), e.message))
+            self._logger.error('Error posting ticket for {}: {}'.format(dict_of_values.get('url'), e.message))
