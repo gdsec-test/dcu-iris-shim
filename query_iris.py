@@ -33,7 +33,7 @@ class QueryIris:
         incidents = []
         logical = '<' if less_than else '>'
         try:
-            query = "select iris_incidentID, iris_serviceID, OriginalEmailAddress " \
+            query = "select iris_incidentID, iris_serviceID, OriginalEmailAddress, CreateDate " \
                     "from IRISIncidentMain where iris_groupID = '443' And (iris_serviceID = '226' " \
                     "Or iris_serviceID = '236') and (SPAM = 'False') and iris_statusID = 1 "
             if x_hours > 0:
