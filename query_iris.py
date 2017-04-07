@@ -37,7 +37,7 @@ class QueryIris:
                     "from IRISIncidentMain where iris_groupID = '443' And (iris_serviceID = '226' " \
                     "Or iris_serviceID = '236') and (SPAM = 'False') and iris_statusID = 1 "
             if x_hours > 0:
-                    query += "and CreateDate " + logical + " \'%s\'" % (datetime.utcnow() - timedelta(hours=x_hours)).strftime("%Y-%m-%d %H:%M:%S")
+                    query += "and CreateDate " + logical + " \'%s\'" % (datetime.now() - timedelta(hours=x_hours)).strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute(query)  # DB query goes here
             incidents = QueryIris.rows(cursor)
         except Exception as e:
