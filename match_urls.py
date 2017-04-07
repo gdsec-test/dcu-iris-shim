@@ -15,4 +15,5 @@ class MatchURL:
                           replace('[dot]', '.').
                           replace('hxxp', 'http').
                           replace('[.]', '.').
-                          replace('(.)', '.'))
+                          replace('(.)', '.').
+                          replace('hXXp', 'http'))
