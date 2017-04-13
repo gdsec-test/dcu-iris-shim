@@ -37,10 +37,32 @@ class QueryIris:
                     "from IRISIncidentMain where iris_groupID = '443' And (iris_serviceID = '226' " \
                     "Or iris_serviceID = '225') and (SPAM = 'False') and iris_statusID = 1 "
             if x_hours > 0:
-                    query += "and CreateDate " + logical + " \'%s\'" % (datetime.now() - timedelta(hours=x_hours)).strftime("%Y-%m-%d %H:%M:%S")
+                query += "and CreateDate " + logical + " \'%s\'" % (datetime.now() - timedelta(hours=x_hours)).strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute(query)  # DB query goes here
             incidents = QueryIris.rows(cursor)
         except Exception as e:
             self._logger.error("Unable to run query {}".format(e))
         finally:
             return incidents
+
+    def netabuse_query(self, x_hours, less_than=False):
+        # connection to DB server
+        cnxn = pyodbc.connect(self._dbstring)
+        cnxn.autocommit = True
+        cnxn.timeout = 0
+        cursor = cnxn.cursor()
+        incident_ids = []
+        logical = '<' if less_than else '>'
+        try:
+            query = "SELECT iris_incidentID, iris_serviceID, OriginalEmailAddress, CreateDate " \
+                    " FROM IRISIncidentMain WHERE iris_groupID = '443' and " \
+                    "(iris_serviceID = '232') And (SPAM = 'False') And iris_statusID = 1 "
+            if x_hours > 0:
+                query += "and CreateDate " + logical + " \'%s\'" % (datetime.now() - timedelta(hours=x_hours)).strftime("%Y-%m-%d %H:%M:%S")
+            # open and execute query
+            cursor.execute(query) # DB query goes here
+            incident_ids = QueryIris.rows(cursor)
+        except Exception as e:
+            self._logger.error("Unable to query IRIS for netabuse...%s", e.message)
+        finally:
+            return incident_ids
