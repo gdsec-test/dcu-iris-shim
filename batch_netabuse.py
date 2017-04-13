@@ -47,7 +47,8 @@ if __name__ == '__main__':
             sleep(30)
         info, notes = incident.get_incident_info(iid)
         for ip in ips.get_ip(notes):
-            item = dict(jwt=jwt, type='NETWORK_ABUSE', url=ip, iid=iid, email=email, create_date=create_date)
+            logger.info("Found ip {}".format(ip))
+            item = dict(jwt=jwt, type='NETWORK_ABUSE', url='http://'+ip, iid=iid, email=email, create_date=create_date)
             response = api.post_ticket(item)
             if response is not None:
                 if response.status_code == 201 or (
