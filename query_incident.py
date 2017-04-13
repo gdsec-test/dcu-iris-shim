@@ -37,10 +37,8 @@ class QueryIncident:
         try:
             self._client.service.AddIncidentNote(
                 incident,
-                "This ticket has been closed by Phishstory. Phishtory is "
-                " maintained by the Digital Crimes Unit - Engineers. An email"
-                " has been sent to the address on the ticket via the email"
-                " messaging system. If you have any issues or questions please"
+                "This ticket has been closed by DCU-ENG. "
+                " If you have any issues or questions please"
                 " contact a member of the Digital Crimes Unit Engineers via"
                 " Lync/Slack or email dcu@", 'phishtory')
             # NTLogin was misspelled when added to IRIS, above mispelling is intentional due to that
