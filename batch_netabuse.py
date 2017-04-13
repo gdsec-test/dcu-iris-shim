@@ -14,19 +14,17 @@ from time import sleep
 
 if __name__ == '__main__':
 
-    types = {226: 'PHISHING', 225: 'MALWARE'}
-
     # Set up logging
- #   path = 'logging.yml'
- #   value = os.getenv('LOG_CFG', None)
- #   if value:
- #       path = value
- #   if os.path.exists(path):
- #       with open(path, 'rt') as f:
- #           lconfig = yaml.safe_load(f.read())
- #       dictConfig(lconfig)
- #   else:
-    logging.basicConfig(level=logging.INFO)
+    path = 'logging.yml'
+    value = os.getenv('LOG_CFG', None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            lconfig = yaml.safe_load(f.read())
+        dictConfig(lconfig)
+    else:
+        logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
     # sys.exit("This line must be commented out to run program")
