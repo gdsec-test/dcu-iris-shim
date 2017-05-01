@@ -47,10 +47,10 @@ if __name__ == '__main__':
             sleep(30)
         info, notes = incident.get_incident_info(iid)
         for ip in ips.get_ip(notes):
-            logger.info("Found ip {}".format(ip))
             item = dict(jwt=jwt, type='NETWORK_ABUSE', url='http://'+ip, iid=iid, email=email, create_date=create_date)
             response = api.post_ticket(item)
             if response is not None:
+		logger.info("{} {}".format(response.text, response.status_code))
                 if response.status_code == 201 or (
                         response.status_code == 422 and
                         "We have already been informed" in response.text):

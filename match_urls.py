@@ -9,12 +9,16 @@ class MatchURL:
         self._logger = logging.getLogger(__name__)
 
     def get_urls(self, text):
-        return re.findall(self.URL, text.replace('&#xA;', '\n').
-                          replace('&nbsp;', '\n').
-                          replace(',', '%2c').
-                          replace('[dot]', '.').
-                          replace('hxxp', 'http').
-                          replace('[.]', '.').
-                          replace('(.)', '.').
-                          replace('hXXp', 'http').
-                          replace('URL: www', 'http://www'))
+        self._logger.debug('Before replace: %s', text)
+        text = text.replace('&#xA;', '\n').\
+            replace('&nbsp;', '\n').\
+            replace(',', '%2c').\
+            replace('[dot]', '.').\
+            replace('hxxp', 'http').\
+            replace('[.]', '.').\
+            replace('(.)', '.').\
+            replace('hXXp', 'http').\
+            replace('URL: www', 'http://www')
+        self._logger.debug('After replace: %s', text)
+        post_replace = re.findall(self.URL, text)
+        return post_replace

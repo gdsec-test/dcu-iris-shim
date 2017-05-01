@@ -24,7 +24,7 @@ class QueryIncident:
                                        "</ns0:IncidentId>")
         incident_info = self._client.service.GetIncidentInfoByIncidentId(
             xml_string)
-        self._logger.debug('Ticket info: %s', incident_info)
+        # self._logger.debug('Ticket info: %s', incident_info)
         # Decode any HTML Entities characters
         h = HTMLParser.HTMLParser()
         notes_text = h.unescape(notes_text)

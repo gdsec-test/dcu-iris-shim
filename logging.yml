@@ -50,11 +50,12 @@ handlers:
 # your code. If you dont define any loggers, the root logger will process
 # the logging messages
 loggers:
-    contact:
-        level: DEBUG
-        handlers: [console, debug_file_handler]
-        propagate: no
+    suds:
+        level: ERROR
+        handlers: [console]
+        propogate: no
 # The logger for the root level directory, which is 'newman'
 root:
-    level: INFO
-    handlers: [info_file_handler, error_file_handler]
+    level: DEBUG
+    handlers: [debug_file_handler, info_file_handler, error_file_handler]
+
