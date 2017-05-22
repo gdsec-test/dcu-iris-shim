@@ -33,11 +33,11 @@ class QueryIris:
         incidents = []
         logical = '<' if less_than else '>'
         try:
-            query = "select iris_incidentID, iris_serviceID, OriginalEmailAddress, CreateDate " \
+            query = "select iris_incidentID, iris_serviceID, OriginalEmailAddress, ModifyDate " \
                     "from IRISIncidentMain where iris_groupID = '443' And (iris_serviceID = '226' " \
                     "Or iris_serviceID = '225') and (SPAM = 'False') and iris_statusID = 1 "
             if x_hours > 0:
-                query += "and CreateDate " + logical + " \'%s\'" % (datetime.now() - timedelta(hours=x_hours)).strftime("%Y-%m-%d %H:%M:%S")
+                query += "and ModifyDate " + logical + " \'%s\'" % (datetime.now() - timedelta(hours=x_hours)).strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute(query)  # DB query goes here
             incidents = QueryIris.rows(cursor)
         except Exception as e:
@@ -54,11 +54,11 @@ class QueryIris:
         incident_ids = []
         logical = '<' if less_than else '>'
         try:
-            query = "SELECT iris_incidentID, iris_serviceID, OriginalEmailAddress, CreateDate " \
+            query = "SELECT iris_incidentID, iris_serviceID, OriginalEmailAddress, ModifyDate " \
                     " FROM IRISIncidentMain WHERE iris_groupID = '443' and " \
                     "(iris_serviceID = '232') And (SPAM = 'False') And iris_statusID = 1 "
             if x_hours > 0:
-                query += "and CreateDate " + logical + " \'%s\'" % (datetime.now() - timedelta(hours=x_hours)).strftime("%Y-%m-%d %H:%M:%S")
+                query += "and ModifyDate " + logical + " \'%s\'" % (datetime.now() - timedelta(hours=x_hours)).strftime("%Y-%m-%d %H:%M:%S")
             # open and execute query
             cursor.execute(query) # DB query goes here
             incident_ids = QueryIris.rows(cursor)

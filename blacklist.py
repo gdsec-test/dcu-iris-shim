@@ -1,4 +1,5 @@
 blacklist = {
+    'Moon@indyvibe.us': 1,
     'clientrelations@resellerclub.com': 1,
     'web.newupdcom@newsletter.updated-news.com': 1,
     'noreply@justdeals.com': 1,
