@@ -42,9 +42,6 @@ class Ipam:
         self.ntlm = WindowsHttpAuthenticated(
             username=self.smdbUsername, password=self.smdbPassword)
 
-        # Set the logging for SUDS to only critical. We don't care about anything less.
-        logging.disable(logging.CRITICAL)
-
         # Create the SUDS SOAP client.
         self.client = Client(
             self.smdbUrls[self.environment], transport=self.ntlm)
@@ -107,8 +104,8 @@ class Ipam:
 
     # Load the SMDB credentials from Nimitz.
     def __load_credentials(self):
-        self.smdbUsername = os.getenv('USERNAME')
-        self.smdbPassword = os.getenv('PASSWORD')
+        self.smdbUsername = os.getenv('SMDB_USERNAME')
+        self.smdbPassword = os.getenv('SMDB_PASSWORD')
 
     # Perform a SOAP call, and parse the results.
     def __soap_call(self, method, params, responseKey):
