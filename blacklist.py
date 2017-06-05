@@ -1,3 +1,5 @@
+import re
+
 blacklist = {
     'Moon@indyvibe.us': 1,
     'clientrelations@resellerclub.com': 1,
@@ -38,3 +40,6 @@ blacklist = {
     'newsletter@svenskamailsnaa.com': 1,
     'newsletter@tagginbox.com': 1
 }
+
+
+invalid_email_notes = [re.compile('We received your feedback')]
