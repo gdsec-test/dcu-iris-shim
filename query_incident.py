@@ -6,6 +6,13 @@ import suds.client
 
 class QueryIncident:
 
+    duplicate_report = 'an identical url/ip being reported'
+    no_parsed_ips = 'no parsable ips'
+    no_parsed_urls = 'no parsable urls'
+
+    reason_msg = 'This ticket has been closed by DCU-ENG due to {}. If you have any issues or questions please contact a member of the Digital Crimes Unit Engineers via Lync/Slack or email dcu@'
+    standard_msg = 'This ticket has been closed by DCU-ENG. If you have any issues or questions please contact a member of the Digital Crimes Unit Engineers via Lync/Slack or email dcu@'
+
     def __init__(self, wsdl):
         self._logger = logging.getLogger(__name__)
         self._client = suds.client.Client(wsdl)
@@ -34,16 +41,17 @@ class QueryIncident:
         notes_text = p.sub('', notes_text)
         return incident_info, notes_text
 
-    def close_incident(self, incident):
+    def close_incident(self, incident, reason=None):
         if incident not in self._closed_tickets:
             try:
-                self._client.service.AddIncidentNote(
-                    incident,
-                    "This ticket has been closed by DCU-ENG. "
-                    " If you have any issues or questions please"
-                    " contact a member of the Digital Crimes Unit Engineers via"
-                    " Lync/Slack or email dcu@", 'phishtory')
-                    # NTLogin was misspelled when added to IRIS, above mispelling is intentional due to that
+                if reason:
+                    self._client.service.AddIncidentNote(
+                        incident,
+                        self.reason_msg.format(reason), 'phishtory')
+                else:
+                    self._client.service.AddIncidentNote(
+                        incident,
+                        self.standard_msg, 'phishtory')
                 self._client.service.QuickCloseIncident(
                     int(incident),
                     15550,)
