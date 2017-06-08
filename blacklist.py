@@ -38,7 +38,8 @@ blacklist = {
     'newsletter@starringconsumers.com': 1,
     'newsletter@svandiceridag.com': 1,
     'newsletter@svenskamailsnaa.com': 1,
-    'newsletter@tagginbox.com': 1
+    'newsletter@tagginbox.com': 1,
+    '89@prbusinessfirm.com': 1
 }
 
 
