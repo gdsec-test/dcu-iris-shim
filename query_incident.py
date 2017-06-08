@@ -35,17 +35,19 @@ class QueryIncident:
         return incident_info, notes_text
 
     def close_incident(self, incident):
-        try:
-            self._client.service.AddIncidentNote(
-                incident,
-                "This ticket has been closed by DCU-ENG. "
-                " If you have any issues or questions please"
-                " contact a member of the Digital Crimes Unit Engineers via"
-                " Lync/Slack or email dcu@", 'phishtory')
-                # NTLogin was misspelled when added to IRIS, above mispelling is intentional due to that
-            self._client.service.QuickCloseIncident(
-                int(incident),
-                15550,)
-            self._logger.info("%s closed successfully", incident)
-        except Exception as e:
-            self._logger.error("Auto Close failed on IID: %s, %s", incident, e)
+        if incident not in self._closed_tickets:
+            try:
+                self._client.service.AddIncidentNote(
+                    incident,
+                    "This ticket has been closed by DCU-ENG. "
+                    " If you have any issues or questions please"
+                    " contact a member of the Digital Crimes Unit Engineers via"
+                    " Lync/Slack or email dcu@", 'phishtory')
+                    # NTLogin was misspelled when added to IRIS, above mispelling is intentional due to that
+                self._client.service.QuickCloseIncident(
+                    int(incident),
+                    15550,)
+                self._logger.info("%s closed successfully", incident)
+                self._closed_tickets.add(incident)
+            except Exception as e:
+                self._logger.error("Auto Close failed on IID: %s, %s", incident, e)
