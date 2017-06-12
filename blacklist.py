@@ -43,4 +43,4 @@ blacklist = {
 }
 
 
-invalid_email_notes = [re.compile('We received your feedback')]
+invalid_email_subject = [re.compile('We received your feedback'), re.compile('The NIH Information Security Program has received your e-mail'), re.compile('Your phishing report was received.')]
