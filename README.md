@@ -44,9 +44,9 @@ Note: You will still need to define all necessary environment variables. This ca
  ## Running Locally
  If you would like to run Iris Shim locally you will need to specify the following environment variables
  1. `sysenv` (dev, ote, prod)
- 2. `key` 
- 3. `secret` 
- 4. `SMDB_USER` 
- 5. `SMDB_PASS`
+ 2. `key` (SSO Key)
+ 3. `secret` (SSO Secret)
+ 4. `SMDB_USER` (User for SMDB IPService WSDL)
+ 5. `SMDB_PASS` (Pass for SMDB IPService WSDL)
 
 The project can then be run locally by running `python run.py`
