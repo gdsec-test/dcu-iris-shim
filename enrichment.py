@@ -91,9 +91,9 @@ def dc_finder(dc):
 
 def os_finder(os):
 
-    if os == 'L' or 'l':
+    if os == 'l':
         return 'Linux'
-    elif os == 'W' or 'w':
+    elif os == 'w':
         return 'Windows'
     else:
         print 'Error locating OS'
