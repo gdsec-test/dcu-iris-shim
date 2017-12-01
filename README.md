@@ -1,4 +1,7 @@
 # Iris Shim
+Iris Shim pulls tickets from the phishing, malware, and network abuse queues in Iris, closes the tickets, and submits them to the Abuse API.
+
+This allows us to easily parse and submit tickets to the Abuse API automation that have been submitted via email.
 
 ## Cloning
  To clone the repository via SSH perform the following
@@ -32,10 +35,10 @@ Note: You will still need to define all necessary environment variables. This ca
 
  After this you may run the tests via
  ```
- nosetests tests/ --cover-package=iris_shim/
+ nosetests tests/
  ```
 
- Optionally, you may provide the flag `--with-coverage` to `nosetests` to determine the test coverage of the project.
+ Optionally, you may provide the flags `--with-coverage --cover-package=./` to `nosetests` to determine the test coverage of the project.
 
 
  ## Running Locally
