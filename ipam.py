@@ -33,6 +33,7 @@ class Ipam:
         'prod': 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     }
 
+    # Disable SSL verification for non-production environments
     if environment != 'prod' and hasattr(ssl, '_create_unverified_context'):
         ssl._create_default_https_context = ssl._create_unverified_context
 
