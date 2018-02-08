@@ -27,8 +27,11 @@ class Ipam:
     smdbPassword = None
 
     # Environment specific SMDB IPAM SOAP API URL's.
+
     smdbUrls = {
-        'dev': 'https://smdb.int.dev-godaddy.com/IPService/ipam.asmx?WSDL',
+#        'dev': 'https://smdb.int.dev-godaddy.com/IPService/ipam.asmx?WSDL',
+# SMDB doesn't appear to have a working dev environment I could find, so dev env hits against test version of SMDB
+        'dev': 'http://smdb.int.test-godaddy.com/IPService/ipam.asmx?WSDL',
         'test': 'http://smdb.int.test-godaddy.com/IPService/ipam.asmx?WSDL',
         'prod': 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     }
