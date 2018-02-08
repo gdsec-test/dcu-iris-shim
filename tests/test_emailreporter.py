@@ -17,3 +17,8 @@ class TestEmailReporter:
     def test_route_method(self, fakerequest):
         self.emailreporter.route_mail({'email': 'dcuinternal@godaddy.com', 'incident': 1234})
         fakerequest.assert_called_once()
+
+        self.emailreporter.route_mail({}) #should bail early and not attempt an API call
+        os.environ['sysenv'] = 'ote' #should bail early due to being OTE, and not attempt an API call
+        self.emailreporter.route_mail({'email': 'dcuinternal@godaddy.com', 'incident': 1234})
+        fakerequest.assert_called_once() #ensure no more API calls have happened
