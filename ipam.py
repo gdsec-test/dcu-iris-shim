@@ -247,7 +247,7 @@ class Ipam:
     # Get details for a specific IP address. Returns a dictionary.
     def get_properties_for_ip(self, ip):
         self.__validate_params(locals())
-        return self.client.service.GetPropertiesForIP(ip, transport=self.ntlm)
+        return self.client.service.GetPropertiesForIP(ip)
         # return self.__soap_call('GetPropertiesForIP', ip, 'GetPropertiesForIPResult')
 
     # Get details for multiple IP addresses. Returns a list.
