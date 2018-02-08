@@ -20,7 +20,7 @@ def nutrition_label(hostname):
         else:
             product = product_finder(product)
 
-    elif dc == 'P3' and hostname[4] == 8:
+    elif dc == 'P3' and hostname[4] == '8':
         os = 'Windows'
         product = '2GH'
 
@@ -40,19 +40,13 @@ def nutrition_label(hostname):
         os = 'Check VAT'
         product = 'Open'
 
-    elif dc == 'Failed':
-        os = os_finder(os)
-        product = product_finder(product) #'Open'
-
     else:
         os = os_finder(os)
 
         if hostname[4] == 'v':
             product = hostname[4:7]
-            product = product_finder(product)
 
-        else:
-            product = product_finder(product)
+        product = product_finder(product)
 
     return dc, os, product
 
