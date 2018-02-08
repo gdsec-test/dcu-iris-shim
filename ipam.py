@@ -29,7 +29,7 @@ class Ipam:
     # Environment specific SMDB IPAM SOAP API URL's.
     smdbUrls = {
         'dev': 'https://smdb.int.dev-godaddy.com/IPService/ipam.asmx?WSDL',
-        'test': 'https://smdb.test.intranet.gdg/IPService/ipam.asmx?WSDL',
+        'test': 'http://smdb.int.test-godaddy.com/IPService/ipam.asmx?WSDL',
         'prod': 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     }
 
