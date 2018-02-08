@@ -8,6 +8,7 @@ import logging
 import re
 from suds import WebFault
 from suds.client import Client
+import ssl
 from suds.transport.https import WindowsHttpAuthenticated
 from urllib2 import URLError
 import os
@@ -31,6 +32,9 @@ class Ipam:
         'test': 'https://smdb.test.intranet.gdg/ipservice/ipam.asmx?WSDL',
         'prod': 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     }
+
+    if environment != 'prod' and hasattr(ssl, '_create_unverified_context'):
+        ssl._create_default_https_context = ssl._create_unverified_context
 
     # This method is called automatically when this class is instantiated.
     def __init__(self):
