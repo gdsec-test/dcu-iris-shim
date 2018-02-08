@@ -10,7 +10,7 @@ def nutrition_label(hostname):
         os = hostname[4]
         os = os_finder(os)
 
-        if hostname[5] == 8:
+        if hostname[5] == '8':
             product = '4GH'
 
         elif hostname[5] == 'v' and hostname[7] == 'w':
@@ -25,12 +25,15 @@ def nutrition_label(hostname):
         product = '2GH'
 
     elif dc == 'DNS':
+        os = os_finder(os)
         product = 'Closed'
 
     elif dc == 'Corp':
+        os = os_finder(os)
         product = 'Closed'
 
     elif dc == 'VPH':
+        os = os_finder(os)
         product = 'Open'
 
     elif dc == 'Check VAT':
@@ -38,7 +41,8 @@ def nutrition_label(hostname):
         product = 'Open'
 
     elif dc == 'Failed':
-        product = 'Open'
+        os = os_finder(os)
+        product = product_finder(product) #'Open'
 
     else:
         os = os_finder(os)
