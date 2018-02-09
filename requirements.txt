@@ -2,3 +2,4 @@ suds
 pyyaml
 pyodbc
 requests
+python-ntlm

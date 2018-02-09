@@ -8,6 +8,7 @@ import logging
 import re
 from suds import WebFault
 from suds.client import Client
+import ssl
 from suds.transport.https import WindowsHttpAuthenticated
 from urllib2 import URLError
 import os
@@ -26,11 +27,18 @@ class Ipam:
     smdbPassword = None
 
     # Environment specific SMDB IPAM SOAP API URL's.
+
     smdbUrls = {
-        'dev': 'https://smdb.int.dev-godaddy.com/IPService/ipam.asmx?WSDL',
-        'test': 'https://smdb.test.intranet.gdg/ipservice/ipam.asmx?WSDL',
+#        'dev': 'https://smdb.int.dev-godaddy.com/IPService/ipam.asmx?WSDL',
+# SMDB doesn't appear to have a working dev environment I could find, so dev env hits against test version of SMDB
+        'dev': 'http://smdb.int.test-godaddy.com/IPService/ipam.asmx?WSDL',
+        'test': 'http://smdb.int.test-godaddy.com/IPService/ipam.asmx?WSDL',
         'prod': 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     }
+
+    # Disable SSL verification for non-production environments
+    if environment != 'prod' and hasattr(ssl, '_create_unverified_context'):
+        ssl._create_default_https_context = ssl._create_unverified_context
 
     # This method is called automatically when this class is instantiated.
     def __init__(self):
@@ -239,7 +247,7 @@ class Ipam:
     # Get details for a specific IP address. Returns a dictionary.
     def get_properties_for_ip(self, ip):
         self.__validate_params(locals())
-        return self.client.service.GetPropertiesForIP(ip, transport=self.ntlm)
+        return self.client.service.GetPropertiesForIP(ip)
         # return self.__soap_call('GetPropertiesForIP', ip, 'GetPropertiesForIPResult')
 
     # Get details for multiple IP addresses. Returns a list.

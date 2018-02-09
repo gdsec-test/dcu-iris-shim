@@ -63,7 +63,7 @@ class TestEnrichment:
     def test_nutrition_label_failed(self):
         data = 'rtplcvnw0398'
         actual = nutrition_label(data)
-        assert_equal(actual, ('Failed', 'Linux', 'Open'))
+        assert_equal(actual, ('Failed', 'Linux', 'cPanel'))
 
     def test_nutrition_label_broken(self):
         data = 'godaddy.com'

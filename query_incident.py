@@ -38,7 +38,7 @@ class QueryIncident:
         notes_text = h.unescape(notes_text)
         # Remove any HTML markup
         p = re.compile(r'<.*?>')
-        notes_text = p.sub('', notes_text)
+        notes_text = p.sub(' ', notes_text)
         return incident_info, notes_text
 
     def close_incident(self, incident, reason=None):
