@@ -15,4 +15,3 @@ class TestMatchUrls:
         data = 'hxxps://pypi[dot]python[dot]org/pypi/stringtheory'
         actual = self.match.get_urls(data)
         assert_equal(actual, ['https://pypi.python.org/pypi/stringtheory'])
-
