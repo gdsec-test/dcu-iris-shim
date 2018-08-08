@@ -16,7 +16,3 @@ class TestMatchUrls:
         actual = self.match.get_urls(data)
         assert_equal(actual, ['https://pypi.python.org/pypi/stringtheory'])
 
-    def test_get_domains(self):
-        data = 'godaddy.com is a valid domain name'
-        actual = self.match.get_urls(data)
-        assert_equal(actual, ['godaddy.com'])
