@@ -18,7 +18,7 @@ class MatchDomain:
 
     def get_domains(self, text):
         if not text:
-            self._logger.debug('None passed to get domains')
+            self._logger.debug('None passed to get_domains')
             return
         self._logger.debug('Before replace: %s', text)
         text = text.replace('&#xA;', '\n').\
