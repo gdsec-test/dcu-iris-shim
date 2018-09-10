@@ -9,7 +9,6 @@ class MatchURL:
 
     def get_urls(self, text):
         if not text:
-            self._logger.debug('None passed to get_urls')
             return
         self._logger.debug('Before replace: %s', text)
         text = text.replace('&#xA;', '\n').\
@@ -22,5 +21,4 @@ class MatchURL:
             replace('hXXp', 'http').\
             replace('URL: www', 'http://www')
         self._logger.debug('After replace: %s', text)
-        post_replace = re.findall(self.URL, text)
-        return post_replace
+        return re.findall(self.URL, text)

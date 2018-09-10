@@ -18,7 +18,6 @@ class MatchDomain:
 
     def get_domains(self, text):
         if not text:
-            self._logger.debug('None passed to get_domains')
             return
         self._logger.debug('Before replace: %s', text)
         text = text.replace('&#xA;', '\n').\
@@ -31,5 +30,4 @@ class MatchDomain:
             replace('hXXp', 'http').\
             replace('URL: www', 'http://www')
         self._logger.debug('After replace: %s', text)
-        post_replace = set(re.findall(self.DOMAIN_NAMES, text))
-        return list(post_replace)
+        return list(set(re.findall(self.DOMAIN_NAMES, text)))
