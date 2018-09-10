@@ -26,7 +26,6 @@ class TestMatchDomains:
         data = 'godaddy.php'
         assert_false(self.match.is_valid_domain(data))
 
-
     def test_is_valid_domain_null_value(self):
         data = None
         assert_false(self.match.is_valid_domain(data))
