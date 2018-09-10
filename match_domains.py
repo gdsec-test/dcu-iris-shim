@@ -1,6 +1,6 @@
 import re
 import logging
-
+from tld import get_tld
 
 class MatchDomain:
     DOMAIN_NAMES = re.compile(r'(?i)\b[a-z0-9\-\.]+\.[a-z]{2,63}', re.IGNORECASE | re.MULTILINE)
@@ -8,7 +8,18 @@ class MatchDomain:
     def __init__(self):
         self._logger = logging.getLogger(__name__)
 
+    def is_valid_domain(self, domain_name):
+        if not domain_name:
+            return False
+        if not get_tld(domain_name, fail_silently=True, fix_protocol=True):
+            self._logger.debug('Domain : {} is not a valid domain'.format(domain_name))
+            return False
+        return True
+
     def get_domains(self, text):
+        if not text:
+            self._logger.debug('None passed to get domains')
+            return
         self._logger.debug('Before replace: %s', text)
         text = text.replace('&#xA;', '\n').\
             replace('&nbsp;', '\n').\
@@ -20,5 +31,5 @@ class MatchDomain:
             replace('hXXp', 'http').\
             replace('URL: www', 'http://www')
         self._logger.debug('After replace: %s', text)
-        post_replace = re.findall(self.DOMAIN_NAMES, text)
-        return post_replace
+        post_replace = set(re.findall(self.DOMAIN_NAMES, text))
+        return list(post_replace)
