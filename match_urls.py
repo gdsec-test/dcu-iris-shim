@@ -8,6 +8,9 @@ class MatchURL:
         self._logger = logging.getLogger(__name__)
 
     def get_urls(self, text):
+        if not text:
+            self._logger.debug('None passed to get_urls')
+            return
         self._logger.debug('Before replace: %s', text)
         text = text.replace('&#xA;', '\n').\
             replace('&nbsp;', '\n').\
