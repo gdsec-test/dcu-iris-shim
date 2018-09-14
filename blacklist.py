@@ -1,6 +1,7 @@
 import re
 
 blacklist = {
+    'francis@get.club': 1,
     'noreply@bluehost.com': 1,
     'Moon@indyvibe.us': 1,
     'incident-report@bitninja.io':1,
