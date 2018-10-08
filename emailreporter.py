@@ -25,16 +25,20 @@ class EmailReporter(object):
             return
         self.cert = (certificate_file_path, private_key_file_path)
         self.headers = {"X-Private-Label-Id": "1"}
-        self.params = {"templateNamespaceKey": "Hosting", "templateTypeKey": "AbuseHostToReporterFP"}
+        self._parse = {'templateNamespaceKey': "Hosting", "templateTypeKey": "AbuseHostToReporterFP"}
+        self._no_parse = {"templateNamespaceKey": "Iris", "templateTypeKey": "ReportAbuse", 'substitutionValues': {}}
         self.messaging_endpoint = 'https://messaging.api.int.dev-godaddy.com/v1/messaging/messages/sendNonShopper'
         if os.environ.get('sysenv', self.DEFAULT_ENV) == 'prod':
             self.messaging_endpoint = 'https://messaging.api.int.godaddy.com/v1/messaging/messages/sendNonShopper'
 
-    def route_mail(self, params):
+    def route_mail(self, params, nothing_parsed=False):
+        '''
         # Determines which template to send
-        # :param params: The parameters provided:  email and incident
-        # :return: None
-
+        :param params: The parameters provided:  email and incident
+        :param nothing_parsed: Set to true if not URLs/IPs were able to be parsed from IRIS email
+        :return: None
+        '''
+        template_dict = {}
         error_message = ""
         if "email" not in params:
             error_message = "/Email address not provided"
@@ -50,19 +54,14 @@ class EmailReporter(object):
             self._logger.fatal('Unable to test template emails for OTE: {}')
             return
 
-        # Only send to actual recipients when in the prod system env
-        if os.environ.get('sysenv', self.DEFAULT_ENV) != 'prod':
-            self.params['recipients'] = [{"email": self.NON_PROD_EMAIL_RECIPIENT}]
-
         # Only send to email address in IRIS if we are in the prod env
         if os.environ.get('sysenv', self.DEFAULT_ENV) == 'prod':
-            self.params['recipients'] = [{"email": params.get('email')}]
+            email_dict = {'recipients': [{"email": params.get('email')}]}
+        else:
+            email_dict = {'recipients': [{"email": self.NON_PROD_EMAIL_RECIPIENT}]}
 
         # Set the incident number in substitutionValues
-        self.params['substitutionValues'] = {"INCIDENTID": params.get('incident')}
-
-        # Seeing the params that were passed in as a printed dictionary will be helpful
-        self._logger.info('route_mail() Params provided: {}'.format(pformat(self.params)))
+        self._parse['substitutionValues'] = {'INCIDENTID': params.get('incident')}
 
         # Sends email to address associated with IRIS ticket, notifying we have received their feedback
         # Uses Template #3128
@@ -78,8 +77,14 @@ class EmailReporter(object):
         #     "templateTypeKey": "AbuseHostToReporterFP",
         # }
         try:
-            # send "We received your feedback" email to reporting entity
-            response = requests.post(self.messaging_endpoint, headers=self.headers, json=self.params, cert=self.cert)
+            if nothing_parsed:
+                template_dict = dict(self._no_parse, **email_dict)
+            else:
+                template_dict = dict(self._parse, **email_dict)
+            # Seeing the params that were passed in as a printed dictionary will be helpful
+            self._logger.info('route_mail() Params provided: {}'.format(pformat(template_dict)))
+
+            response = requests.post(self.messaging_endpoint, headers=self.headers, json=template_dict, cert=self.cert)
             self._logger.info(response.text)
         except Exception as e:
             self._logger.fatal('Fatal Exception: {}\n{}'.format(e.message, traceback.format_exc()))

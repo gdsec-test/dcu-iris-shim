@@ -10,8 +10,14 @@ class QueryIncident:
     no_parsed_ips = 'no parsable ips'
     no_parsed_urls = 'no parsable urls'
 
-    reason_msg = 'This ticket has been closed by DCU-ENG due to {}. If you have any issues or questions please contact a member of the Digital Crimes Unit Engineers via Lync/Slack or email dcu@'
-    standard_msg = 'This ticket has been closed by DCU-ENG. If you have any issues or questions please contact a member of the Digital Crimes Unit Engineers via Lync/Slack or email dcu@'
+    reason_msg = 'This ticket has been closed by Digital Crimes Unit (DCU) for {}. Do not re-open the ticket without ' \
+                 'first contacting DCU. If you have any issues or questions, please contact us via our Slack channel,' \
+                 ' #duceng. Abuse reports should be submitted using the following abuse form: ' \
+                 'https://supportcenter.godaddy.com/AbuseReport'
+    standard_msg = 'This ticket has been closed by Digital Crimes Unit (DCU). Do not re-open the ticket without first' \
+                   ' contacting DCU. If you have any issues or questions, please contact us via our Slack channel, ' \
+                   '#duceng. Abuse reports should be submitted using the following abuse form: ' \
+                   'https://supportcenter.godaddy.com/AbuseReport'
 
     def __init__(self, wsdl):
         self._logger = logging.getLogger(__name__)
