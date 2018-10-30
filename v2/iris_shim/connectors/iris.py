@@ -82,9 +82,17 @@ class IrisDB:
 
 
 class IrisSoap:
-    # This class should likely also contain a variety of constants associated with approved close reasons/notes.
-    # This may take the form of an Enum or some other mapping mechanism.
-    approved_notes = []  # TODO update this to a more reliable/re-usable data structure
+    _new_abuse_reports = 'New GoDaddy abuse reports should be submitted via https://supportcenter.godaddy.com/AbuseReport'
+
+    note_successfully_parsed = 'Do not re-open this incident.\n' \
+                               'This report has been successfully parsed by our Digital Crimes Unit and will be processed as soon as possible.\n' \
+                               'If you have questions please contact us in Slack (#dcueng). ' + _new_abuse_reports
+
+    note_failed_to_parse = 'Do not re-open this incident.\n' \
+                           'Our Digital Crimes Unit was not able to automatically determine any valid sources of abuse and have notified the reporter.\n' \
+                           'If you believe this ticket has been closed in error please contact us in Slack (#dcueng). ' + _new_abuse_reports
+
+    approved_notes = [note_successfully_parsed, note_failed_to_parse]
 
     def __init__(self, wsdl_url):
         self._logger = logging.getLogger(__name__)
@@ -132,7 +140,7 @@ class IrisSoap:
         :param report_id: The Iris Report ID to close.
         """
         try:
-            self._client.service.QuickCloseIncident(int(report_id), 15550,)
+            self._client.service.QuickCloseIncident(int(report_id), 15550, )
         except Exception as e:
             self._logger.error('Unable to close report {} {}'.format(report_id, e.message))
 
