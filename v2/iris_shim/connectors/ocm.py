@@ -12,7 +12,7 @@ class Mailer:
     """
 
     hermes_failed_to_parse = 'iris_shim.failed_to_parse_report'
-    hermes_successfully_parsed = ''
+    hermes_successfully_parsed = 'iris_shim.report_successfully_parsed'
 
     def __init__(self, env, cert, key, test_email=None):
         self._logger = logging.getLogger(__name__)
@@ -41,7 +41,19 @@ class Mailer:
         :param reporter_email:
         :return:
         """
-        pass
+        if not reporter_email:
+            return False
+
+        kwargs = self._generate_kwargs_for_hermes()
+        kwargs['recipients'] = self._recipients or [{'email': reporter_email}]
+
+        try:
+            resp = send_mail(self.hermes_successfully_parsed, [], **kwargs)  # pass an empty list for substitutionValues
+            self._logger.info('Sent "report successfully parsed" email to reporter {}: {}'.format(reporter_email, resp))
+        except Exception as e:
+            self._logger.error('Unable to send "report successfully parsed" email to reporter {}: {}'.format(reporter_email, e.message))
+            return False
+        return True
 
     def report_failed_to_parsed(self, reporter_email):
         """
@@ -57,7 +69,7 @@ class Mailer:
         kwargs['recipients'] = self._recipients or [{'email': reporter_email}]
 
         try:
-            resp = send_mail(self.hermes_failed_to_parse, **kwargs)
+            resp = send_mail(self.hermes_failed_to_parse, [], **kwargs)  # pass an empty list for substitutionValues
             self._logger.info('Sent "failed to parse" email to reporter {}: {}'.format(reporter_email, resp))
         except Exception as e:
             self._logger.error('Unable to send "failed to parse" email to reporter {}: {}'.format(reporter_email, e.message))
