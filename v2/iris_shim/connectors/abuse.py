@@ -1,15 +1,24 @@
+import abc
 import logging
+
 import requests
 
 
-class AbuseAPI:
+class AbuseAPI(object):
+    __metaclass__ = abc.ABCMeta
+
+    def create_ticket(self, type, source, report_id, reporter_email, create_date):
+        pass
+
+
+class PhishstoryAPI(AbuseAPI):
 
     def __init__(self, abuse_api_url, sso_key, sso_secret):
         self._logger = logging.getLogger(__name__)
         self._url = abuse_api_url
         self._headers = {'Content-Type': 'application/json', 'Authorization': 'sso-key ' + sso_key + ':' + sso_secret}
 
-    def post(self, type, source, report_id, reporter_email, create_date):
+    def create_ticket(self, type, source, report_id, reporter_email, create_date):
         """
         Connects to API and attempted to create an API ticket from parsed IRIS ticket data
         :param type: abuse type determined from IRIS ticket

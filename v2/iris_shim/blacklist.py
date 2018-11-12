@@ -6,7 +6,7 @@ to never submit Abuse API reports for.
 The data structures here are flexible and could be lists, sets, dictionaries, etc.
 """
 
-blacklist_emails = {
+emails = {
     'francis@get.club',
     'incident-report@bitninja.io',
     'news@portalmedestetica.com.ar',
@@ -22,7 +22,7 @@ blacklist_emails = {
     'noreply@justdeals.com'
 }
 
-blacklist_domains = {
+domains = {
     '2yahoo.com',
     'antihotmail.com',
     'aol.com',
@@ -65,7 +65,7 @@ blacklist_domains = {
     'yahoo.com.br'
 }
 
-blacklist_subjects = {
+subjects = {
     '[my blog] please moderate: hello world',
     'go daddy, llc  domain list suspended for reported abuse',
     'report of .xyz domain suspensions & unsuspensions',

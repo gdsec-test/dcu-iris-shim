@@ -9,19 +9,25 @@ class Report:
         self.reporter_email = reporter_email
         self.modify_date = modify_date
 
-        self.sources_valid = {}  # Valid sources found in this incident
-        self.sources_reportable = {}  # A subset of sources_valid that are actually reportable
-        self.sources_blacklist = {}  # Any blacklisted sources found in this incident
+        self.sources_valid = set()  # Valid sources found in this incident
+        self.sources_reportable = set()  # A subset of sources_valid that are actually reportable
+        self.sources_blacklist = set()  # Any blacklisted sources found in this incident
 
         self.valid = True  # Assume an incident is valid until otherwise determined
         self.invalid_reason = None
+
+    def __str__(self):
+        return 'Report {} for reporter {}'.format(self.report_id, self.reporter_email)
+
+    def __repr__(self):
+        return 'Report({!r}, {!r}, {!r}, {!r})'.format(self.report_id, self.type, self.reporter_email, self.modify_date)
 
     def validate(self, email_subject):
         """
         Perform basic validation on this report before attempting to parse the report itself.
         This should filter out reports that are submitted by spammers, known bad subjects, etc.
         """
-        if self.reporter_email in blacklist.reporters or email_subject in blacklist.subjects:
+        if self.reporter_email in blacklist.emails or email_subject in blacklist.subjects:
             self.valid, self.invalid_reason = False, 'blacklist'
         return self.valid
 
@@ -45,6 +51,13 @@ class Reporter:
         self.reports_valid = []
         self.reports_invalid = []
         self.reports_reportable = []
+
+    def __str__(self):
+        return 'Reporter {}, reports reportable: {}, reports invalid: {}'.format(self.email, self.reports_reportable,
+                                                                                 self.reports_invalid)
+
+    def __repr__(self):
+        return 'Reporter({!r})'.format(self.email)
 
     def add_incident(self, iris_report):
         """
