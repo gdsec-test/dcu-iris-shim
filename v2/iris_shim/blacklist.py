@@ -54,6 +54,7 @@ domains = {
     'madmimi.com',
     'markmonitor.com',
     'riskiq.net',
+    'riskiq.com',
     'securepaynet.net',
     'starfieldtech.com',
     'sucuri.net',
@@ -62,7 +63,12 @@ domains = {
     'wildwestdomains.com',
     'yahoo.com',
     'yahoo.com.ar',
-    'yahoo.com.br'
+    'yahoo.com.br',
+    'ultradns.net'
+    'ultradns.org',
+    'ultradns.info',
+    'ultradns.co.uk',
+    'dnsmadeeasy.com'
 }
 
 subjects = {
