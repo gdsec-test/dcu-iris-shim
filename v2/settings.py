@@ -13,6 +13,8 @@ class AppConfig(object):
     IRIS_SERVICE_ID_NETWORK_ABUSE = None
     IRIS_GROUP_ID_CSA = None
 
+    NON_PROD_EMAIL = 'dcuinternal@godaddy.com'
+
     def __init__(self):
         self.IRIS_USERNAME = os.getenv('IRIS_USERNAME')
         self.IRIS_PASSWORD = os.getenv('IRIS_PASSWORD')
@@ -32,6 +34,8 @@ class ProductionAppConfig(AppConfig):
     IRIS_SERVICE_ID_MALWARE = 225
     IRIS_SERVICE_ID_NETWORK_ABUSE = 232
     IRIS_GROUP_ID_CSA = 443
+
+    NON_PROD_EMAIL = None
 
     def __init__(self):
         super(ProductionAppConfig, self).__init__()
