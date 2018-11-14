@@ -28,15 +28,14 @@ class PhishstoryAPI(AbuseAPI):
         :param create_date: iris ticket create date
         :return: returns ticket id on success or empty dict on failure to create ticket
         """
-
-        payload = {'type': type,
-                   'source': source,
-                   'metadata': {
-                       'iris_id': report_id,
-                       'iris_reporter': reporter_email,
-                       'iris_created': create_date.strftime('%Y-%m-%d %H:%M:%S')}}
-
         try:
+            payload = {'type': type,
+                       'source': source,
+                       'metadata': {
+                           'iris_id': report_id,
+                           'iris_reporter': reporter_email,
+                           'iris_created': create_date.strftime('%Y-%m-%d %H:%M:%S')}}
+
             response = requests.post(self._url, json=payload, headers=self._headers)
             response.raise_for_status()
             return response.content['u_number']

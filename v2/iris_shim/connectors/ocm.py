@@ -55,7 +55,7 @@ class Mailer:
             return False
         return True
 
-    def report_failed_to_parsed(self, reporter_email):
+    def report_failed_to_parse(self, reporter_email):
         """
         Given a reporter email, send a notice that notifies the reporter that we were unable to successfully parse
         their report and we require more information to action their claims.

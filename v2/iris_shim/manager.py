@@ -44,11 +44,11 @@ class ReportManager:
                 reporters[report.reporter_email].add_incident(report)
                 continue
 
-            email_body = self._datastore.get_customer_notes(report.incident_id)
+            email_body = self._datastore.get_customer_notes(report.report_id)
             report.parse(email_body)
 
             # Update report's sources_reportable to contain all sources we haven't seen and update the master list.
-            report.sources_reportable = report.sources_seen.difference_update(sources_seen)
+            report.sources_reportable = report.sources_valid.difference(sources_seen)
             sources_seen.update(report.sources_reportable)
 
             reporters[report.reporter_email].add_incident(report)
@@ -95,7 +95,7 @@ class ReportManager:
         success, fail = [], []
 
         for source in iris_report.sources_reportable:
-            ticket = self._api.create_ticket(iris_report.report_type, source, iris_report.report_id,
+            ticket = self._api.create_ticket(iris_report.type, source, iris_report.report_id,
                                              iris_report.reporter_email, iris_report.modify_date)
             success.append((source, ticket)) if ticket else fail.append(source)
 
@@ -109,10 +109,10 @@ class ReportManager:
         '''
         if reporter.successfully_parsed():
             return self._mailer.report_successfully_parsed(reporter.email)
-        return self._mailer.report_failed_to_parsed(reporter.email)
+        return self._mailer.report_failed_to_parse(reporter.email)
 
     def _validate_report(self, report):
-        data = self._datastore.get_report_info_by_id(report.incident_id)
+        data = self._datastore.get_report_info_by_id(report.report_id)
         email_subject = data.Subject.strip() if data.Subject else ''
 
-        return not report.validate(email_subject)
+        return report.validate(email_subject)

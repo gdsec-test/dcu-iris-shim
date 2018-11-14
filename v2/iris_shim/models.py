@@ -59,6 +59,12 @@ class Reporter:
     def __repr__(self):
         return 'Reporter({!r})'.format(self.email)
 
+    def __eq__(self, other):
+        return (self.email == other.email and
+                self.reports_valid == other.reports_valid and
+                self.reports_invalid == other.reports_invalid and
+                self.reports_reportable == other.reports_reportable)
+
     def add_incident(self, iris_report):
         """
         Mutually exclusively add incidents to one of three lists.

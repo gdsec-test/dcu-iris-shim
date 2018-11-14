@@ -126,6 +126,31 @@ class IrisSoap:
         """
         Utilizes the GetIncidentInfoByIncidentId endpoint to retrieve the email subject and other information.
         :param report_id: The Iris Report ID to retrieve the incident information from.
+
+        Example return:
+            ((IncidentInfo){
+               SubscriberId = 106
+               Source = 4
+               IncidentType = 1
+               PriorityId = 3
+               ServiceId = 212
+               GroupId = 510
+               Category = 0
+               PrivateLabelId = 1
+               NoteType = 0
+               Action = 1
+               Visibility = 2
+               Protection = 0
+               ShopperValidate = 1
+               Active = False
+               ShopperId = "-1"
+               ToEmailAddress = "paddy@justsomeemail.com"
+               Subject = "testing create"
+               IncidentId = 1355054
+               CompanyId = 1
+               EmployeeId = 15550
+               StatusId = 0
+            }
         """
         try:
             xml_string = suds.sax.text.Raw("<ns0:IncidentId>" + str(report_id) + "</ns0:IncidentId>")
@@ -159,7 +184,7 @@ class IrisSoap:
         Notates the provided report_id with note and then closes the incident as the Phishstory User.
         """
         if not report_id:
-            self._logger.info('Unable to close report: Invalid ReportID provided')
+            self._logger.info('Unable to close report an invalid ReportID was provided')
             return
 
         if note not in self.approved_notes:
