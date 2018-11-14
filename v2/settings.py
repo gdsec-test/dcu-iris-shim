@@ -4,8 +4,8 @@ import os
 class AppConfig(object):
     IRIS_WSDL = None
     IRIS_SERVER = None
+    IRIS_PORT = None
 
-    IRIS_PORT = 1433
     IRIS_DATABASE = 'iris'
 
     IRIS_SERVICE_ID_PHISHING = None
@@ -29,6 +29,7 @@ class AppConfig(object):
 class ProductionAppConfig(AppConfig):
     IRIS_WSDL = "https://iris-ws.int.godaddy.com/iriswebservice.asmx?WSDL"
     IRIS_SERVER = '10.32.146.30'
+    IRIS_PORT = 1433
 
     IRIS_SERVICE_ID_PHISHING = 226
     IRIS_SERVICE_ID_MALWARE = 225
@@ -43,7 +44,7 @@ class ProductionAppConfig(AppConfig):
 
 class DevelopmentAppConfig(AppConfig):
     IRIS_WSDL = "https://iris-ws.dev.int.godaddy.com/iriswebservice.asmx?WSDL"
-    IRIS_SERVER = 'P3DWSQL07\CSS'
+    IRIS_SERVER = 'P3DWSQL07\\CSS'
 
     IRIS_SERVICE_ID_PHISHING = 212
     IRIS_SERVICE_ID_MALWARE = 213

@@ -1,5 +1,6 @@
 import HTMLParser
 import logging
+import os
 import re
 from datetime import datetime, timedelta
 
@@ -8,11 +9,16 @@ import suds
 import suds.client
 
 from v2.iris_shim.models import Report
+from v2.settings import config_by_name
+
+app_settings = config_by_name[os.getenv('sysenv', 'dev')]()
 
 
 class IrisDB:
-    _service_id_mappings = {226: 'PHISHING', 225: 'MALWARE', 232: 'NETWORK_ABUSE'}
-    _connection_string = 'DRIVER={FreeTDS};SERVER={server};PORT={port};DATABASE={database};UID={username};PWD={password};TDS_VERSION=8.0'
+    _service_id_mappings = {app_settings.IRIS_SERVICE_ID_PHISHING: 'PHISHING',
+                            app_settings.IRIS_SERVICE_ID_MALWARE: 'MALWARE',
+                            app_settings.IRIS_SERVICE_ID_NETWORK_ABUSE: 'NETWORK_ABUSE'}
+    _connection_string = 'DRIVER=FreeTDS;SERVER={server};PORT={port};DATABASE={database};UID={username};PWD={password};TDS_VERSION=8.0'
 
     def __init__(self, server, port, database, username, password):
         self._logger = logging.getLogger(__name__)
@@ -48,10 +54,10 @@ class IrisDB:
         :param service_id: The corresponding Iris Service ID (Integer) for services such as phishing, malware, etc.
         :param hours: The number of hours to look back in time since now
         """
-        modify_time = (datetime.now() - timedelta(hours=hours)).strftime('%Y-%m-%d %H:%M:%S')
-        query = 'SELECT iris_incidentID, iris_serviceID, OriginalEmailAddress, ModifyDate ' \
-                'FROM IRISIncidentMain WHERE iris_groupID = "{group_id}" AND (iris_serviceID = "{service_id}") ' \
-                'AND (SPAM = "False") AND iris_statusID = 1 AND ModifyDate < "{time}"'.format(group_id=group_id,
+        modify_time = (datetime.now() - timedelta(hours=hours)).strftime("%Y-%m-%d %H:%M:%S")
+        query = "SELECT iris_incidentID, iris_serviceID, OriginalEmailAddress, ModifyDate " \
+                "FROM IRISIncidentMain WHERE iris_groupID = '{group_id}' AND (iris_serviceID = '{service_id}') " \
+                "AND (SPAM = 'False') AND iris_statusID = 1 AND ModifyDate < '{time}'".format(group_id=group_id,
                                                                                               service_id=service_id,
                                                                                               time=modify_time)
         return self._rows(query)
@@ -62,7 +68,8 @@ class IrisDB:
         :param hours: The number of hours to look back in time since now
         """
         # TODO abstract group_id and service_id into some non-magic number variable/structure
-        return [] if hours < 0 else self._get_reports(443, 226, hours)
+        return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_CSA,
+                                                      app_settings.IRIS_SERVICE_ID_PHISHING, hours)
 
     def get_network_abuse_reports(self, hours=1):
         """
@@ -70,7 +77,8 @@ class IrisDB:
         :param hours: The number of hours to look back in time since now
         """
         # TODO abstract group_id and service_id into some non-magic number variable/structure
-        return [] if hours < 0 else self._get_reports(443, 232, hours)
+        return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_CSA,
+                                                      app_settings.IRIS_SERVICE_ID_NETWORK_ABUSE, hours)
 
     def get_malware_reports(self, hours=1):
         """
@@ -78,7 +86,8 @@ class IrisDB:
         :param hours: The number of hours to look back in time since now
         """
         # TODO abstract group_id and service_id into some non-magic number variable/structure
-        return [] if hours < 0 else self._get_reports(443, 225, hours)
+        return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_CSA,
+                                                      app_settings.IRIS_SERVICE_ID_MALWARE, hours)
 
 
 class IrisSoap:
@@ -102,6 +111,8 @@ class IrisSoap:
         """
         Utilizes the GetIncidentCustomerNotes endpoint to retrieve the body of the email.
         :param report_id: The Iris Report ID to retrieve the customer notes from.
+
+        Please note: this method does not return the expected iris message body when used in the Dev environment
         """
         # TODO revisit this logic and see if it can be simplified. Add Exception logic.
         notes_text = self._client.service.GetIncidentCustomerNotes(report_id, 0)
@@ -117,8 +128,7 @@ class IrisSoap:
         :param report_id: The Iris Report ID to retrieve the incident information from.
         """
         try:
-            xml_string = suds.sax.text.Raw("<ns0:IncidentId>" + str(report_id) +
-                                           "</ns0:IncidentId>")
+            xml_string = suds.sax.text.Raw("<ns0:IncidentId>" + str(report_id) + "</ns0:IncidentId>")
             return self._client.service.GetIncidentInfoByIncidentId(xml_string)
         except Exception as e:
             self._logger.error('Unable to retrieve Incident Info for report {} {}'.format(report_id, e.message))
