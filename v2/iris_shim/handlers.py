@@ -23,7 +23,7 @@ class Handler(object):
 class Phishing(Handler):
     def __init__(self, app_settings):
         super(Phishing, self).__init__(app_settings)
-        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.SSO_KEY, app_settings.SSO_SECRET)
+        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
         self._mailer = Mailer(os.getenv('sysenv', 'dev'), app_settings.OCM_CERT, app_settings.OCM_KEY, app_settings.NON_PROD_EMAIL)
 
     def run(self):
@@ -41,7 +41,7 @@ class Phishing(Handler):
 class NetworkAbuse(Handler):
     def __init__(self, app_settings):
         super(NetworkAbuse, self).__init__(app_settings)
-        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.SSO_KEY, app_settings.SSO_SECRET)
+        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
         self._mailer = Mailer(os.getenv('sysenv', 'dev'), app_settings.OCM_CERT, app_settings.OCM_KEY, app_settings.NON_PROD_EMAIL)
 
     def run(self):
@@ -59,7 +59,7 @@ class NetworkAbuse(Handler):
 class Malware(Handler):
     def __init__(self, app_settings):
         super(Malware, self).__init__(app_settings)
-        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.SSO_KEY, app_settings.SSO_SECRET)
+        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
         self._mailer = Mailer(os.getenv('sysenv', 'dev'), app_settings.OCM_CERT, app_settings.OCM_KEY, app_settings.NON_PROD_EMAIL)
 
     def run(self):
