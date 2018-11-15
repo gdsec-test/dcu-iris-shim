@@ -1,9 +1,13 @@
+import logging
+from parser import Parser
+
 import blacklist
 
 
 class Report:
 
     def __init__(self, report_id, report_type, reporter_email, modify_date):
+        self._logger = logging.getLogger(__name__)
         self.report_id = report_id
         self.type = report_type
         self.reporter_email = reporter_email
@@ -32,7 +36,7 @@ class Report:
         return self.valid
 
     def parse(self, email_body):
-        '''
+        """
         Extract Domains, URLs, etc.
         Determine if any of these URLs are 'blacklisted' and add them to sources_blacklist
         This may include any sources that aren't necessarily 'blacklisted' but we don't want to submit reports for e.g. godaddy.com
@@ -41,8 +45,19 @@ class Report:
         This will likely use an external library that is extracted out of the ALF project
         :param email_body:
         :return:
-        '''
-        pass
+        """
+        parser = Parser()
+        if self.type in ['PHISHING', 'MALWARE']:
+            urls, domains, black_list = parser.parse_phish_malware(email_body, self.reporter_email)
+            self.sources_valid.update(urls)
+            self.sources_valid.update(domains)
+            self.sources_blacklist.update(black_list)
+
+        elif self.type == 'NETWORK_ABUSE':
+            self.sources_valid.update(parser.parse_netabuse(email_body))
+
+        else:
+            self._logger.error("IRIS ID: {}. {} is an unsupported abuse type".format(self.report_id, self.type))
 
 
 class Reporter:

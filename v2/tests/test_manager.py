@@ -1,9 +1,9 @@
 from collections import defaultdict, namedtuple
 from datetime import datetime
 
-from mock import patch
 from nose.tools import assert_equal, assert_false, assert_true
 
+from mock import patch
 from v2.iris_shim.manager import ReportManager
 from v2.iris_shim.models import Report, Reporter
 
@@ -38,6 +38,7 @@ class MockAbuseAPI(object):
 
 class TestReportManager:
     reporter_email = 'dcuinternal@godaddy.com'
+
     def __init__(self):
         self._manager = ReportManager(MockIrisSoap(), MockMailer(), MockAbuseAPI())
         self._reporter = Reporter('dcuinternal@godaddy.com')
