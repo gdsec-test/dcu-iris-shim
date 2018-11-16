@@ -10,6 +10,7 @@ flake8:
 	@echo "----- Running linter -----"
 	flake8 --config ./.flake8 .
 
+
 .PHONY: isort
 isort:
 	@echo "----- Optimizing imports -----"

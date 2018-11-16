@@ -8,8 +8,8 @@ import pyodbc
 import suds
 import suds.client
 
-from v2.iris_shim.models import Report
-from v2.settings import config_by_name
+from iris_shim.models import Report
+from settings import config_by_name
 
 app_settings = config_by_name[os.getenv('sysenv', 'dev')]()
 
