@@ -47,6 +47,7 @@ class Report:
         :return:
         """
         parser = Parser()
+
         if self.type in ['PHISHING', 'MALWARE']:
             urls, domains, black_list = parser.parse_phish_malware(email_body, self.reporter_email)
             self.sources_valid.update(urls)
@@ -58,6 +59,9 @@ class Report:
 
         else:
             self._logger.error("IRIS ID: {}. {} is an unsupported abuse type".format(self.report_id, self.type))
+
+        if not self.sources_blacklist and not self.sources_reportable and not self.sources_valid:
+            self.valid, self.invalid_reason = False, 'No parseable sources'
 
 
 class Reporter:

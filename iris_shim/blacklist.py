@@ -43,6 +43,8 @@ domains = {
     'godaddy.in',
     'godaddy.ua',
     'godaddyteam.com',
+    'google.com',
+    'youtube.com',
     'hostgator.com',
     'hostgator.com.br',
     'hotmail.com',
