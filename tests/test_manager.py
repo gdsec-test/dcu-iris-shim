@@ -20,6 +20,7 @@ class MockMailer(object):
 
 class MockIrisSoap(object):
     note_successfully_parsed = None
+    note_failed_to_parse = None
 
     def get_customer_notes(self, report_id):
         pass
