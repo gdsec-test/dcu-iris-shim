@@ -60,13 +60,14 @@ class MatchSources:
         :param domain_list:
         :return: the domain list with any invalid domain names removed
         """
+        valid_domains = []
         if not domain_list:
-            return []
+            return valid_domains
+
         for domain_name in domain_list:
-            if not get_tld(domain_name, fail_silently=True, fix_protocol=True):
-                self._logger.debug('Domain : {} is not a valid domain'.format(domain_name))
-                domain_list.remove(domain_name)
-            return domain_list
+            if get_tld(domain_name, fail_silently=True, fix_protocol=True):
+                valid_domains.append(domain_name)
+        return valid_domains
 
     def _separate_blacklisted_domains(self, domain_list):
         """
