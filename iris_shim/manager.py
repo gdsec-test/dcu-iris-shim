@@ -102,11 +102,11 @@ class ReportManager:
         return success, fail
 
     def _send_customer_interaction(self, reporter):
-        '''
+        """
         Send the appropriate reporter interaction based on whether or not we were able to parse any sources.
         :param reporter:
         :return:
-        '''
+        """
         if reporter.successfully_parsed():
             return self._mailer.report_successfully_parsed(reporter.email)
         return self._mailer.report_failed_to_parse(reporter.email)

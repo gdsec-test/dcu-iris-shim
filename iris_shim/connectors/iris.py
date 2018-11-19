@@ -17,7 +17,8 @@ app_settings = config_by_name[os.getenv('sysenv', 'dev')]()
 class IrisDB:
     _service_id_mappings = {app_settings.IRIS_SERVICE_ID_PHISHING: 'PHISHING',
                             app_settings.IRIS_SERVICE_ID_MALWARE: 'MALWARE',
-                            app_settings.IRIS_SERVICE_ID_NETWORK_ABUSE: 'NETWORK_ABUSE'}
+                            app_settings.IRIS_SERVICE_ID_NETWORK_ABUSE: 'NETWORK_ABUSE',
+                            app_settings.IRIS_SERVICE_ID_CHILD_ABUSE: 'CHILD_ABUSE'}
     _connection_string = 'DRIVER=FreeTDS;SERVER={server};PORT={port};DATABASE={database};UID={username};PWD={password};TDS_VERSION=8.0'
 
     def __init__(self, server, port, database, username, password):
@@ -85,6 +86,14 @@ class IrisDB:
         """
         return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_CSA,
                                                       app_settings.IRIS_SERVICE_ID_MALWARE, hours)
+
+    def get_child_abuse_reports(self, hours=1):
+        """
+        Retrieves all Child Abuse specific incidents from Iris for a given time frame
+        :param hours: The number of hours to look back in time since now
+        """
+        return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_OPS_DIGITAL_CRIMES,
+                                                      app_settings.IRIS_SERVICE_ID_CHILD_ABUSE, hours)
 
 
 class IrisSoap:

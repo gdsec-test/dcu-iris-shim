@@ -77,6 +77,7 @@ class Malware(Handler):
 class CSAM(Handler):
     def __init__(self, app_settings):
         super(CSAM, self).__init__(app_settings)
+        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
 
     def run(self):
         """
@@ -85,4 +86,5 @@ class CSAM(Handler):
         and in turn will send feedback to the Customer that we were unable to process their request.
         Ultimately, all valid reports will be submitted to the Abuse API with the corresponding Iris metadata.
         """
+        iris_reports = self._iris_db.get_child_abuse_reports()
         raise Exception('unimplemented')
