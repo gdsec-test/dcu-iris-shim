@@ -8,8 +8,8 @@ import pyodbc
 import suds
 import suds.client
 
-from v2.iris_shim.models import Report
-from v2.settings import config_by_name
+from iris_shim.models import Report
+from settings import config_by_name
 
 app_settings = config_by_name[os.getenv('sysenv', 'dev')]()
 
@@ -67,7 +67,6 @@ class IrisDB:
         Retrieves all Phishing specific incidents from Iris for a given time frame
         :param hours: The number of hours to look back in time since now
         """
-        # TODO abstract group_id and service_id into some non-magic number variable/structure
         return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_CSA,
                                                       app_settings.IRIS_SERVICE_ID_PHISHING, hours)
 
@@ -76,7 +75,6 @@ class IrisDB:
         Retrieves all Network Abuse specific incidents from Iris for a given time frame
         :param hours: The number of hours to look back in time since now
         """
-        # TODO abstract group_id and service_id into some non-magic number variable/structure
         return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_CSA,
                                                       app_settings.IRIS_SERVICE_ID_NETWORK_ABUSE, hours)
 
@@ -85,7 +83,6 @@ class IrisDB:
         Retrieves all Malware specific incidents from Iris for a given time frame
         :param hours: The number of hours to look back in time since now
         """
-        # TODO abstract group_id and service_id into some non-magic number variable/structure
         return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_CSA,
                                                       app_settings.IRIS_SERVICE_ID_MALWARE, hours)
 
@@ -114,7 +111,6 @@ class IrisSoap:
 
         Please note: this method does not return the expected iris message body when used in the Dev environment
         """
-        # TODO revisit this logic and see if it can be simplified. Add Exception logic.
         notes_text = self._client.service.GetIncidentCustomerNotes(report_id, 0)
         h = HTMLParser.HTMLParser()
         notes_text = h.unescape(notes_text)

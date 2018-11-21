@@ -1,10 +1,10 @@
 import abc
 import os
 
-from v2.iris_shim.connectors.abuse import PhishstoryAPI
-from v2.iris_shim.connectors.iris import IrisDB, IrisSoap
-from v2.iris_shim.connectors.ocm import Mailer
-from v2.iris_shim.manager import ReportManager
+from iris_shim.connectors.abuse import PhishstoryAPI
+from iris_shim.connectors.iris import IrisDB, IrisSoap
+from iris_shim.connectors.ocm import Mailer
+from iris_shim.manager import ReportManager
 
 
 class Handler(object):

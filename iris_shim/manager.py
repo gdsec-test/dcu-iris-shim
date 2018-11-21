@@ -1,7 +1,7 @@
 import logging
 from collections import defaultdict
 
-from v2.iris_shim.models import Reporter
+from iris_shim.models import Reporter
 
 
 class ReportManager:

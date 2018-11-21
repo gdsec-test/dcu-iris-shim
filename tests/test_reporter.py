@@ -2,7 +2,7 @@ from datetime import datetime
 
 from nose.tools import assert_equal
 
-from v2.iris_shim.models import Report, Reporter
+from iris_shim.models import Report, Reporter
 
 
 class TestReporter(object):

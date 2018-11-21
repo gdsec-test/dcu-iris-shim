@@ -3,8 +3,8 @@ from datetime import datetime
 from nose.tools import (assert_equal, assert_false, assert_in, assert_is_none,
                         assert_not_in, assert_true)
 
-from v2.iris_shim.blacklist import emails
-from v2.iris_shim.models import Report
+from iris_shim.blacklist import emails
+from iris_shim.models import Report
 
 
 class TestReport(object):

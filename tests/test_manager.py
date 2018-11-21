@@ -1,11 +1,11 @@
 from collections import defaultdict, namedtuple
 from datetime import datetime
 
+from mock import patch
 from nose.tools import assert_equal, assert_false, assert_true
 
-from mock import patch
-from v2.iris_shim.manager import ReportManager
-from v2.iris_shim.models import Report, Reporter
+from iris_shim.manager import ReportManager
+from iris_shim.models import Report, Reporter
 
 IncidentInfo = namedtuple('IncidentInfo', 'Subject')
 
@@ -20,6 +20,7 @@ class MockMailer(object):
 
 class MockIrisSoap(object):
     note_successfully_parsed = None
+    note_failed_to_parse = None
 
     def get_customer_notes(self, report_id):
         pass
