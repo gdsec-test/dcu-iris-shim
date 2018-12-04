@@ -107,7 +107,12 @@ class IrisSoap:
                            'Our Digital Crimes Unit was not able to automatically determine any valid sources of abuse and have notified the reporter.\n' \
                            'If you believe this ticket has been closed in error please contact us in Slack (#dcueng). ' + _new_abuse_reports
 
-    approved_notes = [note_successfully_parsed, note_failed_to_parse]
+    note_csam_failed_to_parse = 'Unable to parse. Leaving ticket open for Investigator review'
+
+    note_csam_successfully_parsed = 'This report has been successfully parsed by our Digital Crimes Unit and submitted to the Abuse Reporting API'
+
+    approved_notes = [note_successfully_parsed, note_failed_to_parse, note_csam_successfully_parsed,
+                      note_csam_failed_to_parse]
 
     def __init__(self, wsdl_url):
         self._logger = logging.getLogger(__name__)
@@ -198,3 +203,20 @@ class IrisSoap:
 
         self._add_note_to_report(report_id, note)
         self._close_report(report_id)
+
+    def notate_and_leave_open(self, report_id, note):
+        """
+        Notates the provided report_id with note and leaves the incident open.
+        :param report_id:
+        :param note:
+        :return:
+        """
+        if not report_id:
+            self._logger.info('Invalid ReportID was provided')
+            return
+
+        if note not in self.approved_notes:
+            self._logger.info('Unable to notate report {} with unsupported note {}'.format(report_id, note))
+            return
+
+        self._add_note_to_report(report_id, note)

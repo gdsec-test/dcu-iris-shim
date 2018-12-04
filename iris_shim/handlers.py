@@ -78,13 +78,16 @@ class CSAM(Handler):
     def __init__(self, app_settings):
         super(CSAM, self).__init__(app_settings)
         self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
+        self._mailer = Mailer(os.getenv('sysenv', 'dev'), app_settings.OCM_CERT, app_settings.OCM_KEY,
+                              app_settings.NON_PROD_EMAIL)
 
     def run(self):
         """
         Retrieves all CSAM incidents from Iris. Performs a variety of checks to determine if this report is valid
         including looking for URLs, Domains, etc. Depending on validation steps we may not create an Abuse Report
-        and in turn will send feedback to the Customer that we were unable to process their request.
+        and in turn will leave the report open in Iris. The CSAM incidents will not be responded to.
         Ultimately, all valid reports will be submitted to the Abuse API with the corresponding Iris metadata.
         """
         iris_reports = self._iris_db.get_child_abuse_reports()
-        raise Exception('unimplemented')
+        manager = ReportManager(self._iris_soap, self._mailer, self._api)
+        manager.process_csam(iris_reports)

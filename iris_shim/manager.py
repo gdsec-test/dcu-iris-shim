@@ -22,6 +22,15 @@ class ReportManager:
         reporters = self._gather_reports(iris_incidents)
         return self._action_reports(reporters)
 
+    def process_csam(self, iris_incidents):
+        """
+        Gather all CSAM IRIS Reports, parse for domains/URLS and submit them to the API
+        :param iris_incidents:
+        :return:
+        """
+        reporters = self._gather_reports(iris_incidents)
+        return self._action_csam_reports(reporters)
+
     def _gather_reports(self, iris_incidents):
         """
         Iterate over all Iris incidents and validate basic data about each report. Afterward, attempt to parse the email
@@ -82,6 +91,34 @@ class ReportManager:
 
                 self._datastore.notate_report_and_close(iris_report.report_id, self._datastore.note_successfully_parsed)
 
+            self._logger.info('Reporter Summary for {}: {}'.format(email, tickets_for_reporter))
+            report_summary[email] = tickets_for_reporter
+        return report_summary
+
+    def _action_csam_reports(self, reporters):
+        """
+        Take the appropriate action for all CSAM incidents that we've parsed or failed to parse.
+        Iterate over all invalid Iris incidents and notate and leave them open, next the reportable sources and submit
+        them to the Abuse API for processing.
+        :param reporters: a mapping of unique reporter emails and their associated Reporter object
+        :return:
+        """
+        report_summary = {}
+
+        for email, reporter in reporters.iteritems():
+            # Notate, but leave open invalid iris report(s)
+            for iris_report in reporter.reports_invalid:
+                self._datastore.notate_and_leave_open(iris_report, self._datastore.note_csam_failed_to_parse)
+
+            # Submit all reportable sources to the Abuse API and close the corresponding iris report(s)
+            tickets_for_reporter = defaultdict(dict)
+            for iris_report in reporter.reports_reportable:
+                success, fail = self._create_abuse_report(iris_report)
+                tickets_for_reporter[iris_report.report_id]['success'] = success
+                tickets_for_reporter[iris_report.report_id]['fail'] = fail
+
+                self._datastore.notate_report_and_close(iris_report.report_id,
+                                                        self._datastore.note_csam_successfully_parsed)
             self._logger.info('Reporter Summary for {}: {}'.format(email, tickets_for_reporter))
             report_summary[email] = tickets_for_reporter
         return report_summary

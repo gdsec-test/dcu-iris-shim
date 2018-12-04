@@ -48,7 +48,7 @@ class Report:
         """
         parser = Parser()
 
-        if self.type in ['PHISHING', 'MALWARE']:
+        if self.type in ['PHISHING', 'MALWARE', 'CHILD_ABUSE']:
             urls, domains, black_list = parser.parse_phish_malware(email_body, self.reporter_email)
             self.sources_valid.update(urls)
             self.sources_valid.update(domains)

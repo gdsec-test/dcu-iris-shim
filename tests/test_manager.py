@@ -21,6 +21,7 @@ class MockMailer(object):
 class MockIrisSoap(object):
     note_successfully_parsed = None
     note_failed_to_parse = None
+    note_csam_successfully_parsed = None
 
     def get_customer_notes(self, report_id):
         pass
@@ -44,6 +45,7 @@ class TestReportManager:
         self._manager = ReportManager(MockIrisSoap(), MockMailer(), MockAbuseAPI())
         self._reporter = Reporter('dcuinternal@godaddy.com')
         self._report = Report('1234', 'PHISHING', self.reporter_email, datetime(2017, 11, 29, 8, 38, 47, 420000))
+        self._csam_report = Report('1234', 'CHILD_ABUSE', self.reporter_email, datetime(2017, 11, 29, 8, 38, 47, 420000))
 
     def test_gather_reports_empty(self):
         assert_equal(self._manager._gather_reports({}), {})
@@ -101,6 +103,19 @@ class TestReportManager:
         self._reporter.reports_reportable = [self._report]
 
         actual = self._manager._action_reports({self.reporter_email: self._reporter})
+
+        ticket_for_reporters = defaultdict(dict)
+        ticket_for_reporters['1234']['success'] = [('malicious-url.com', 'DCU1234')]
+        ticket_for_reporters['1234']['fail'] = []
+
+        assert_equal(actual, {self.reporter_email: ticket_for_reporters})
+
+    @patch.object(ReportManager, '_create_abuse_report', side_effect=[([('malicious-url.com', 'DCU1234')], [])])
+    def test_action_csam_reports(self, _create_abuse_report):
+        self._report.sources_reportable = {'malicious-url.com'}
+        self._reporter.reports_reportable = [self._csam_report]
+
+        actual = self._manager._action_csam_reports({self.reporter_email: self._reporter})
 
         ticket_for_reporters = defaultdict(dict)
         ticket_for_reporters['1234']['success'] = [('malicious-url.com', 'DCU1234')]
