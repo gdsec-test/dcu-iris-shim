@@ -1,5 +1,5 @@
 # Iris Shim
-Iris Shim parses abuse reports from the Iris data store. It currently supports parsing Phishing, Malware, and Network Abuse.
+Iris Shim parses abuse reports from the Iris data store. It currently supports parsing Phishing, Malware, Network Abuse and CSAM.
 
 It performs a view core functions:
 1. Parse emails from Iris
