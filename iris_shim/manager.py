@@ -108,7 +108,7 @@ class ReportManager:
         for email, reporter in reporters.iteritems():
             # Notate, but leave open invalid iris report(s)
             for iris_report in reporter.reports_invalid:
-                self._datastore.notate_and_leave_open(iris_report, self._datastore.note_csam_failed_to_parse)
+                self._datastore.notate_and_leave_open(iris_report.report_id, self._datastore.note_csam_failed_to_parse)
 
             # Submit all reportable sources to the Abuse API and close the corresponding iris report(s)
             tickets_for_reporter = defaultdict(dict)
