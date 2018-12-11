@@ -161,7 +161,7 @@ class IrisSoap:
         :param note: The message to leave in the customer notes.
         """
         try:
-            self._client.service.AddIncidentNote(report_id, note, 'phishstory')
+            self._client.service.AddIncidentNote(report_id, note, 'phishtory')
         except Exception as e:
             self._logger.error('Unable to notate report {} {}'.format(report_id, e.message))
 
