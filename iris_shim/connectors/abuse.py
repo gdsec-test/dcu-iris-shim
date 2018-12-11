@@ -38,7 +38,9 @@ class PhishstoryAPI(AbuseAPI):
 
             response = requests.post(self._url, json=payload, headers=self._headers)
             response.raise_for_status()
-            return response.content['u_number']
+
+            response_body = response.json()
+            return response_body.get('u_number') if response_body else None
         except Exception as e:
             self._logger.error('Error posting ticket for {} {}'.format(source, e.message))
             return None
