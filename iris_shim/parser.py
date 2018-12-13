@@ -1,5 +1,7 @@
 from utils.match_sources import MatchSources
 
+from .blacklist import domains as blacklist
+
 
 class Parser:
 
@@ -13,9 +15,15 @@ class Parser:
         :return:
         """
         urls = self.match_sources.get_urls(email_body)
-        domains, blacklist = self.match_sources.get_domains(email_body)
-        reportable_domains = self.remove_reporter_domain(domains, reporter_email)
-        return set(urls), set(reportable_domains), set(blacklist)
+        urls_blacklist, urls_valid = [], []
+        for url in urls:
+            domain = self.match_sources.get_domains(url)
+            urls_blacklist.append(url) if set(domain) & blacklist else urls_valid.append(url)
+
+        domains = self.match_sources.get_domains(email_body)
+        domains_valid, domains_blacklist = self.match_sources.separate_blacklisted_domains(domains)
+        reportable_domains = self.remove_reporter_domain(domains_valid, reporter_email)
+        return set(urls_valid), set(reportable_domains), set(domains_blacklist + urls_blacklist)
 
     def parse_netabuse(self, email_body):
         """

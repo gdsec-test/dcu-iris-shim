@@ -36,7 +36,7 @@ class TestMatchSources:
     def test_get_domains_invalid(self):
         data = 'There is no domain name here.'
         actual = self.match.get_domains(data)
-        assert_equal(actual, ([], []))
+        assert_equal(actual, ([]))
 
     def test_get_domains_null_value(self):
         data = None
@@ -45,12 +45,7 @@ class TestMatchSources:
     def test_get_domains(self):
         data = 'comicsn.beer is a valid domain name'
         actual = self.match.get_domains(data)
-        assert_equal(actual, (['comicsn.beer'], []))
-
-    def test_get_domains_blacklisted(self):
-        data = 'godaddy.com is a valid domain name that is blacklisted'
-        actual = self.match.get_domains(data)
-        assert_equal(actual, ([], ['godaddy.com']))
+        assert_equal(actual, ['comicsn.beer'])
 
     def test_is_valid_domain_success(self):
         data = ['comicsn.beer']
@@ -65,3 +60,23 @@ class TestMatchSources:
     def test_is_valid_domain_null_value(self):
         data = None
         assert_false(self.match.is_valid_domain(data))
+
+    def test_separate_blacklisted_domains_both_valid(self):
+        data = ['godaddy.com', 'notblacklisted.com']
+        actual = self.match.separate_blacklisted_domains(data)
+        assert_equal(actual, (['notblacklisted.com'], ['godaddy.com']))
+
+    def test_separate_blacklisted_domains_one_valid(self):
+        data = ['godaddy.com']
+        actual = self.match.separate_blacklisted_domains(data)
+        assert_equal(actual, ([], ['godaddy.com']))
+
+    def test_separate_blacklisted_domains_one_empty(self):
+        data = ['godaddy.com', '']
+        actual = self.match.separate_blacklisted_domains(data)
+        assert_equal(actual, ([''], ['godaddy.com']))
+
+    def test_separate_blacklisted_domains_null_list(self):
+        data = []
+        actual = self.match.separate_blacklisted_domains(data)
+        assert_equal(actual, ([], []))
