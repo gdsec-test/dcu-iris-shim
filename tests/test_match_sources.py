@@ -80,3 +80,8 @@ class TestMatchSources:
         data = []
         actual = self.match.separate_blacklisted_domains(data)
         assert_equal(actual, ([], []))
+
+    def test_separate_blacklisted_domains_uppercase_domain(self):
+        data = ['GoDaddy.com', 'NotBlackListed.com']
+        actual = self.match.separate_blacklisted_domains(data)
+        assert_equal(actual, (['NotBlackListed.com'], ['GoDaddy.com']))

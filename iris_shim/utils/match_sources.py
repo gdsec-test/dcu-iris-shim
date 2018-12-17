@@ -78,7 +78,7 @@ class MatchSources:
         if not domain_list:
             return [], found_blacklist
         for domain in domain_list:
-            if domain in blacklist.domains:
+            if domain and domain.lower() in blacklist.domains:
                 found_blacklist.append(domain)
                 domain_list.remove(domain)
 

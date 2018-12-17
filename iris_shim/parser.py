@@ -17,7 +17,7 @@ class Parser:
         urls = self.match_sources.get_urls(email_body)
         urls_blacklist, urls_valid = [], []
         for url in urls:
-            domain = self.match_sources.get_domains(url)
+            domain = map(lambda x: x.lower(), self.match_sources.get_domains(url))
             urls_blacklist.append(url) if set(domain) & blacklist else urls_valid.append(url)
 
         domains = self.match_sources.get_domains(email_body)
