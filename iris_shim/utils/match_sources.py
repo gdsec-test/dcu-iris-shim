@@ -74,15 +74,18 @@ class MatchSources:
         :param domain_list:
         :return: domain list with blacklisted domains removed, and list containing the blacklisted domains.
         """
-        found_blacklist = []
+        domains_valid, domains_blacklist = [], []
+
         if not domain_list:
-            return [], found_blacklist
+            return domains_valid, domains_blacklist
+
         for domain in domain_list:
             if domain and domain.lower() in blacklist.domains:
-                found_blacklist.append(domain)
-                domain_list.remove(domain)
+                domains_blacklist.append(domain)
+            else:
+                domains_valid.append(domain)
 
-        return domain_list, found_blacklist
+        return domains_valid, domains_blacklist
 
     def _text_cleanup(self, text):
         """
