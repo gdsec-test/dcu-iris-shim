@@ -204,7 +204,7 @@ class IrisSoap:
         self._add_note_to_report(report_id, note)
         self._close_report(report_id)
 
-    def notate_and_leave_open(self, report_id, note):
+    def notate_report(self, report_id, note):
         """
         Notates the provided report_id with note and leaves the incident open.
         :param report_id:
@@ -213,10 +213,7 @@ class IrisSoap:
         """
         if not report_id:
             self._logger.info('Invalid ReportID was provided')
-            return
-
-        if note not in self.approved_notes:
+        elif note not in self.approved_notes:
             self._logger.info('Unable to notate report {} with unsupported note {}'.format(report_id, note))
-            return
-
-        self._add_note_to_report(report_id, note)
+        else:
+            self._add_note_to_report(report_id, note)

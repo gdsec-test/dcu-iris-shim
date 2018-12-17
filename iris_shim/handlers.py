@@ -4,7 +4,7 @@ import os
 from iris_shim.connectors.abuse import PhishstoryAPI
 from iris_shim.connectors.iris import IrisDB, IrisSoap
 from iris_shim.connectors.ocm import Mailer
-from iris_shim.manager import ReportManager
+from iris_shim.manager import CSAMReportManager, ReportManager
 
 
 class Handler(object):
@@ -78,8 +78,6 @@ class CSAM(Handler):
     def __init__(self, app_settings):
         super(CSAM, self).__init__(app_settings)
         self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
-        self._mailer = Mailer(os.getenv('sysenv', 'dev'), app_settings.OCM_CERT, app_settings.OCM_KEY,
-                              app_settings.NON_PROD_EMAIL)
 
     def run(self):
         """
@@ -89,5 +87,5 @@ class CSAM(Handler):
         Ultimately, all valid reports will be submitted to the Abuse API with the corresponding Iris metadata.
         """
         iris_reports = self._iris_db.get_child_abuse_reports()
-        manager = ReportManager(self._iris_soap, self._mailer, self._api)
-        manager.process_csam(iris_reports)
+        manager = CSAMReportManager(self._iris_soap, self._api)
+        manager.process(iris_reports)
