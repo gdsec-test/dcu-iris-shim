@@ -1,7 +1,7 @@
 import logging
 import re
 
-from tld import get_tld
+from tld import get_fld, get_tld
 
 from iris_shim import blacklist
 
@@ -80,12 +80,21 @@ class MatchSources:
             return domains_valid, domains_blacklist
 
         for domain in domain_list:
-            if domain and domain.lower() in blacklist.domains:
+            parent_domain = self.get_parent_domain(domain)
+            if parent_domain and parent_domain.lower() in blacklist.domains:
                 domains_blacklist.append(domain)
             else:
                 domains_valid.append(domain)
 
         return domains_valid, domains_blacklist
+
+    def get_parent_domain(self, domain):
+        """
+        Extracts the parent domain from a domain having subdomains.
+        :param domain:
+        :return: parent domain
+        """
+        return get_fld(domain, fail_silently=True, fix_protocol=True)
 
     def _text_cleanup(self, text):
         """

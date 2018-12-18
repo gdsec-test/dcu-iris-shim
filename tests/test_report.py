@@ -59,3 +59,10 @@ class TestReport(object):
 
         assert_in('http://www.comicsN.beer', self._report1.sources_valid)
         assert_in('http://dcuinternal@Godaddy.com', self._report1.sources_blacklist)
+
+    def test_parse_subdomain(self):
+        email_body1 = 'http://www.comicsN.beer http://dcuinternal@Godaddy.com http://www.godaddy.com www.godaddy.com'
+        self._report1.parse(email_body1)
+
+        assert_in('http://www.comicsN.beer', self._report1.sources_valid)
+        assert_in('http://dcuinternal@Godaddy.com', self._report1.sources_blacklist)
