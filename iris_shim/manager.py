@@ -82,6 +82,9 @@ class ReportManager:
 
                 self._datastore.notate_report_and_close(iris_report.report_id, self._datastore.note_successfully_parsed)
 
+            for iris_report in reporter.reports_valid:
+                self._datastore.notate_report_and_close(iris_report.report_id, self._datastore.note_successfully_parsed)
+
             self._logger.info('Reporter Summary for {}: {}'.format(email, tickets_for_reporter))
             report_summary[email] = tickets_for_reporter
         return report_summary
