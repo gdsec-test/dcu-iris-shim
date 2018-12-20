@@ -180,25 +180,24 @@ class CSAMReportManager:
         :param reporters: a mapping of unique reporter emails and their associated Reporter object
         :return:
         """
-        report_summary = {}
+        report_summary = defaultdict(list)
 
         for email, reporter in reporters.iteritems():
             # Notate, but leave open invalid iris report(s)
             for iris_report in reporter.reports_invalid:
                 self._datastore.notate_report(iris_report.report_id, self._datastore.note_csam_failed_to_parse)
+                report_summary['needs_investigator_review'].append(iris_report.report_id)
 
             # Submit all reportable sources to the Abuse API and close the corresponding iris report(s)
-            tickets_for_reporter = defaultdict(dict)
             for iris_report in reporter.reports_reportable:
                 success, fail = self._create_abuse_report(iris_report)
-                tickets_for_reporter[iris_report.report_id]['success'] = success
-                tickets_for_reporter[iris_report.report_id]['fail'] = fail
-
-                self._datastore.notate_report_and_close(iris_report.report_id,
-                                                        self._datastore.note_csam_successfully_parsed)
-            # TODO: Update info being logged, need to determine what to log
-            self._logger.info('Reporter Summary for {}: {}'.format(email, tickets_for_reporter))
-            report_summary[email] = tickets_for_reporter
+                if success:
+                    report_summary['successfully_submitted_to_api'].append(iris_report.report_id)
+                    self._datastore.notate_report_and_close(iris_report.report_id,
+                                                            self._datastore.note_csam_successfully_parsed)
+                else:
+                    report_summary['needs_investigator_review'].append(iris_report.report_id)
+        self._logger.info('CSAM Report Summary - {}'.format(report_summary))
         return report_summary
 
     def _create_abuse_report(self, iris_report):
@@ -215,3 +214,9 @@ class CSAMReportManager:
             success.append((source, ticket)) if ticket else fail.append(source)
 
         return success, fail
+
+    def _validate_report(self, report):
+        data = self._datastore.get_report_info_by_id(report.report_id)
+        email_subject = data.Subject.strip() if data.Subject else ''
+
+        return report.validate(email_subject)

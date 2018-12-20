@@ -4,7 +4,7 @@ from datetime import datetime
 from mock import patch
 from nose.tools import assert_equal, assert_false, assert_true
 
-from iris_shim.manager import ReportManager
+from iris_shim.manager import CSAMReportManager, ReportManager
 from iris_shim.models import Report, Reporter
 
 IncidentInfo = namedtuple('IncidentInfo', 'Subject')
@@ -22,6 +22,7 @@ class MockIrisSoap(object):
     note_successfully_parsed = None
     note_failed_to_parse = None
     note_csam_successfully_parsed = None
+    note_csam_failed_to_parse = None
 
     def get_customer_notes(self, report_id):
         pass
@@ -30,6 +31,9 @@ class MockIrisSoap(object):
         pass
 
     def notate_report_and_close(self, report_id, note):
+        pass
+
+    def notate_report(self, report_id, note):
         pass
 
 
@@ -43,9 +47,11 @@ class TestReportManager:
 
     def __init__(self):
         self._manager = ReportManager(MockIrisSoap(), MockMailer(), MockAbuseAPI())
+        self._csam_manager = CSAMReportManager(MockIrisSoap, MockAbuseAPI)
         self._reporter = Reporter('dcuinternal@godaddy.com')
         self._report = Report('1234', 'PHISHING', self.reporter_email, datetime(2017, 11, 29, 8, 38, 47, 420000))
         self._csam_report = Report('1234', 'CHILD_ABUSE', self.reporter_email, datetime(2017, 11, 29, 8, 38, 47, 420000))
+        self._csam_report_invalid = Report('2111', 'CHILD_ABUSE', self.reporter_email, datetime(2017, 11, 29, 8, 38, 47, 420000))
 
     def test_gather_reports_empty(self):
         assert_equal(self._manager._gather_reports({}), {})
@@ -110,15 +116,17 @@ class TestReportManager:
 
         assert_equal(actual, {self.reporter_email: ticket_for_reporters})
 
-    @patch.object(ReportManager, '_create_abuse_report', side_effect=[([('malicious-url.com', 'DCU1234')], [])])
+    @patch.object(CSAMReportManager, '_create_abuse_report', side_effect=[([('malicious-url.com', 'DCU1234')], [])])
     def test_action_csam_reports(self, _create_abuse_report):
+        self._reporter.reports_invalid = [self._csam_report_invalid]
         self._report.sources_reportable = {'malicious-url.com'}
         self._reporter.reports_reportable = [self._csam_report]
 
-        actual = self._manager._action_csam_reports({self.reporter_email: self._reporter})
+        actual = self._csam_manager._action_reports({self.reporter_email: self._reporter})
 
-        ticket_for_reporters = defaultdict(dict)
-        ticket_for_reporters['1234']['success'] = [('malicious-url.com', 'DCU1234')]
-        ticket_for_reporters['1234']['fail'] = []
+        report_summary = defaultdict(list)
+        report_summary['successfully_submitted_to_api'] = [1234]
+        report_summary['needs_investigator_review'] = [2111]
 
-        assert_equal(actual, {self.reporter_email: ticket_for_reporters})
+        assert_equal(actual, {'successfully_submitted_to_api': [1234],
+                              'needs_investigator_review': [2111]})
