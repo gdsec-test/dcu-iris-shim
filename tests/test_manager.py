@@ -116,17 +116,46 @@ class TestReportManager:
 
         assert_equal(actual, {self.reporter_email: ticket_for_reporters})
 
-    @patch.object(CSAMReportManager, '_create_abuse_report', side_effect=[([('malicious-url.com', 'DCU1234')], [])])
-    def test_action_csam_reports(self, _create_abuse_report):
+    """  Tests for CSAM Report Manager  """
+
+    @patch.object(MockIrisSoap, 'notate_report')
+    @patch.object(MockIrisSoap, 'notate_report_and_close')
+    @patch.object(CSAMReportManager, '_create_abuse_report', side_effect=[([('malicious-url.com', 'DCU1234')], [('needs-review.com')])])
+    def test_action_csam_reports(self, _create_abuse_report, notate_report_and_close, notate_report):
         self._reporter.reports_invalid = [self._csam_report_invalid]
-        self._report.sources_reportable = {'malicious-url.com'}
+        self._csam_report.sources_reportable = ['malicious-url.com', 'needs-review.com']
         self._reporter.reports_reportable = [self._csam_report]
 
         actual = self._csam_manager._action_reports({self.reporter_email: self._reporter})
 
         report_summary = defaultdict(list)
-        report_summary['successfully_submitted_to_api'] = [1234]
-        report_summary['needs_investigator_review'] = [2111]
+        report_summary['successfully_submitted_to_api'] = ['1234']
+        report_summary['needs_investigator_review'] = ['2111']
 
-        assert_equal(actual, {'successfully_submitted_to_api': [1234],
-                              'needs_investigator_review': [2111]})
+        assert_equal(actual.get('successfully_submitted_to_api'), report_summary.get('successfully_submitted_to_api'))
+        assert_equal(actual.get('needs_investigator_review'), report_summary.get('needs_investigator_review'))
+
+    @patch.object(MockAbuseAPI, 'create_ticket', side_effect=['1', None])
+    def test_csam_create_abuse_report(self, create_ticket):
+        self._csam_report.sources_reportable = ['malicious-url.com', 'malicious-url.com/1/']
+        actual_success, actual_fail = self._csam_manager._create_abuse_report(self._csam_report)
+
+        assert_equal(actual_success, [('malicious-url.com', '1')])
+        assert_equal(actual_fail, ['malicious-url.com/1/'])
+
+    @patch.object(MockIrisSoap, 'get_report_info_by_id', return_value=IncidentInfo('we received your feedback'))
+    def test_csam_gather_reports_invalid_report(self, get_report_info_by_id):
+        actual = self._csam_manager._gather_reports({self._csam_report})
+        self._reporter.reports_invalid = [self._csam_report]
+
+        assert_equal(actual, {self.reporter_email: self._reporter})
+
+    @patch.object(MockIrisSoap, 'get_report_info_by_id', return_value=IncidentInfo('test subject'))
+    @patch.object(MockIrisSoap, 'get_customer_notes', return_value='malicious-url.com')
+    def test_csam_gather_reports(self, get_customer_notes, get_report_info_by_id):
+        self._report.sources_valid = self._report.sources_reportable = {'malicious-url.com'}
+
+        actual = self._csam_manager._gather_reports([self._csam_report])
+        self._reporter.reports_reportable = [self._csam_report]
+
+        assert_equal(actual, {self.reporter_email: self._reporter})
