@@ -36,7 +36,7 @@ class PhishstoryAPI(AbuseAPI):
                            'iris_reporter': reporter_email,
                            'iris_created': create_date.strftime('%Y-%m-%d %H:%M:%S')}}
 
-            response = requests.post(self._url, json=payload, headers=self._headers, verify=False)
+            response = requests.post(self._url, json=payload, headers=self._headers)
             response.raise_for_status()
 
             response_body = response.json()
