@@ -1,7 +1,7 @@
 import logging
 import re
 
-from tld import get_tld
+from tld import get_fld, get_tld
 
 from iris_shim import blacklist
 
@@ -19,15 +19,14 @@ class MatchSources:
         Takes in IRIS email text and replaces any obfuscation etc. with preferred characters, and then regex is used
         to pull out any domain names.
         :param text:
-        :return: List of valid domain names and a list of blacklisted domains
+        :return: List of valid domain names
         """
         if not text:
             self._logger.debug('No email body (Text) was passed to get_domains')
             return []
 
         found_domains = re.findall(self.domain_names, self._text_cleanup(text))
-        valid_domains = self.is_valid_domain(found_domains)
-        return self._separate_blacklisted_domains(valid_domains)
+        return self.is_valid_domain(found_domains)
 
     def get_ip(self, text):
         """
@@ -69,21 +68,33 @@ class MatchSources:
                 valid_domains.append(domain_name)
         return valid_domains
 
-    def _separate_blacklisted_domains(self, domain_list):
+    def separate_blacklisted_domains(self, domain_list):
         """
         Iterates through provided domain names list and pulls out any blacklisted domain names into their own list
         :param domain_list:
         :return: domain list with blacklisted domains removed, and list containing the blacklisted domains.
         """
-        found_blacklist = []
-        if not domain_list:
-            return [], found_blacklist
-        for domain in domain_list:
-            if domain in blacklist.domains:
-                found_blacklist.append(domain)
-                domain_list.remove(domain)
+        domains_valid, domains_blacklist = [], []
 
-        return domain_list, found_blacklist
+        if not domain_list:
+            return domains_valid, domains_blacklist
+
+        for domain in domain_list:
+            parent_domain = self.get_parent_domain(domain)
+            if parent_domain and parent_domain.lower() in blacklist.domains:
+                domains_blacklist.append(domain)
+            else:
+                domains_valid.append(domain)
+
+        return domains_valid, domains_blacklist
+
+    def get_parent_domain(self, domain):
+        """
+        Extracts the parent domain from a domain having subdomains.
+        :param domain:
+        :return: parent domain
+        """
+        return get_fld(domain, fail_silently=True, fix_protocol=True)
 
     def _text_cleanup(self, text):
         """

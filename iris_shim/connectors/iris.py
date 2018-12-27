@@ -4,10 +4,10 @@ import os
 import re
 from datetime import datetime, timedelta
 
-import pyodbc
 import suds
 import suds.client
 
+import pyodbc
 from iris_shim.models import Report
 from settings import config_by_name
 

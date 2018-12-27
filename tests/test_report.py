@@ -41,7 +41,7 @@ class TestReport(object):
         assert_equal(repr(self._report), expected)
 
     def test_parse(self):
-        email_body = 'http://www.comicsn.beer more text example.com, riskiq.com, theaaronbean.com'
+        email_body = 'http://www.comicsn.beer http://dcuinternal@godaddy.com more text example.com, riskiq.com, theaaronbean.com'
         email_body2 = '190.168.1.1, plus some random works and this ip: 191.168.1.0'
         self._report1.parse(email_body)
         self._report2.parse(email_body2)
@@ -49,5 +49,20 @@ class TestReport(object):
 
         assert_not_in('theaaronbean.com', self._report1.sources_valid)
         assert_in('http://www.comicsn.beer', self._report1.sources_valid)
+        assert_in('http://dcuinternal@godaddy.com', self._report1.sources_blacklist)
         assert_in('191.168.1.0', self._report2.sources_valid)
         assert_equal(self._report3.sources_reportable, set([]))
+
+    def test_parse_uppercase_url(self):
+        email_body1 = 'http://www.comicsN.beer http://dcuinternal@Godaddy.com more text example.com, riskiq.com, theaaronbean.com'
+        self._report1.parse(email_body1)
+
+        assert_in('http://www.comicsN.beer', self._report1.sources_valid)
+        assert_in('http://dcuinternal@Godaddy.com', self._report1.sources_blacklist)
+
+    def test_parse_subdomain(self):
+        email_body1 = 'http://www.comicsN.beer http://dcuinternal@Godaddy.com http://www.godaddy.com www.godaddy.com'
+        self._report1.parse(email_body1)
+
+        assert_in('http://www.comicsN.beer', self._report1.sources_valid)
+        assert_in('http://dcuinternal@Godaddy.com', self._report1.sources_blacklist)
