@@ -23,6 +23,7 @@ class MockIrisSoap(object):
     note_failed_to_parse = None
     note_csam_successfully_parsed = None
     note_csam_failed_to_parse = None
+    note_csam_failed_to_submit_to_api = None
 
     def get_customer_notes(self, report_id):
         pass
@@ -120,7 +121,8 @@ class TestReportManager:
 
     @patch.object(MockIrisSoap, 'notate_report')
     @patch.object(MockIrisSoap, 'notate_report_and_close')
-    @patch.object(CSAMReportManager, '_create_abuse_report', side_effect=[([('malicious-url.com', 'DCU1234')], [('needs-review.com')])])
+    @patch.object(CSAMReportManager, '_create_abuse_report',
+                  side_effect=[([('malicious-url.com', 'DCU1234')], ['needs-review.com'])])
     def test_action_csam_reports(self, _create_abuse_report, notate_report_and_close, notate_report):
         self._reporter.reports_invalid = [self._csam_report_invalid]
         self._csam_report.sources_reportable = ['malicious-url.com', 'needs-review.com']
@@ -133,6 +135,20 @@ class TestReportManager:
         report_summary['needs_investigator_review'] = ['2111']
 
         assert_equal(actual.get('successfully_submitted_to_api'), report_summary.get('successfully_submitted_to_api'))
+        assert_equal(actual.get('needs_investigator_review'), report_summary.get('needs_investigator_review'))
+
+    @patch.object(MockIrisSoap, 'notate_report')
+    @patch.object(CSAMReportManager, '_create_abuse_report',
+                  side_effect=[([()], ['needs-review.com', 'also-needs-review.com'])])
+    def test_action_csam_reports_fail(self, _create_abuse_report, notate_report):
+        self._csam_report.sources_reportable = ['needs-review.com', 'also-needs-review.com']
+        self._reporter.reports_reportable = [self._csam_report]
+
+        actual = self._csam_manager._action_reports({self.reporter_email: self._reporter})
+
+        report_summary = defaultdict(list)
+        report_summary['needs_investigator_review'] = ['1234']
+
         assert_equal(actual.get('needs_investigator_review'), report_summary.get('needs_investigator_review'))
 
     @patch.object(MockAbuseAPI, 'create_ticket', side_effect=['1', None])

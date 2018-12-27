@@ -111,8 +111,10 @@ class IrisSoap:
 
     note_csam_successfully_parsed = 'This report has been successfully parsed by our Digital Crimes Unit and submitted to the Abuse Reporting API'
 
+    note_csam_failed_to_submit_to_api = 'Failed to submit to Abuse API. An Investigator will need to review.'
+
     approved_notes = [note_successfully_parsed, note_failed_to_parse, note_csam_successfully_parsed,
-                      note_csam_failed_to_parse]
+                      note_csam_failed_to_parse, note_csam_failed_to_submit_to_api]
 
     def __init__(self, wsdl_url):
         self._logger = logging.getLogger(__name__)

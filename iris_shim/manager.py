@@ -178,7 +178,7 @@ class CSAMReportManager:
         Iterate over all invalid Iris incidents and notate and leave them open, next the reportable sources and submit
         them to the Abuse API for processing.
         :param reporters: a mapping of unique reporter emails and their associated Reporter object
-        :return:
+        :return: A defaultdict(list) with 2 possible keys that contain a list of IRIS ID's
         """
         report_summary = defaultdict(list)
 
@@ -191,12 +191,14 @@ class CSAMReportManager:
             # Submit all reportable sources to the Abuse API and close the corresponding iris report(s)
             for iris_report in reporter.reports_reportable:
                 success, fail = self._create_abuse_report(iris_report)
-                if success:
+                if not all(success):
+                    self._datastore.notate_report(iris_report.report_id,
+                                                  self._datastore.note_csam_failed_to_submit_to_api)
+                    report_summary['needs_investigator_review'].append(iris_report.report_id)
+                else:
                     report_summary['successfully_submitted_to_api'].append(iris_report.report_id)
                     self._datastore.notate_report_and_close(iris_report.report_id,
                                                             self._datastore.note_csam_successfully_parsed)
-                else:
-                    report_summary['needs_investigator_review'].append(iris_report.report_id)
         self._logger.info('CSAM Report Summary - {}'.format(report_summary))
         return report_summary
 
