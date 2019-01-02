@@ -10,7 +10,6 @@ class ReportManager:
         :param datastore: The backend datastore to retrieve information about reports e.g. Iris
         :param mailer: The mailer that we should use to send feedback emails to reporters e.g. OCM
         :param api: The API that we should submit abuse ticket creation requests to.
-        ma
         """
         self._logger = logging.getLogger(__name__)
 
@@ -127,7 +126,6 @@ class CSAMReportManager:
         """
         :param datastore: The backend datastore to retrieve information about reports e.g. Iris
         :param api: The API that we should submit abuse ticket creation requests to.
-        ma
         """
         self._logger = logging.getLogger(__name__)
 
@@ -191,17 +189,18 @@ class CSAMReportManager:
                 self._datastore.notate_report(iris_report.report_id, self._datastore.note_csam_failed_to_parse)
                 report_summary['needs_investigator_review'].append(iris_report.report_id)
 
-            # Submit all reportable sources to the Abuse API and close the corresponding iris report(s)
+            # Submit all reportable sources to the Abuse API. Leave IRIS ID open if a report fails; otherwise, close it.
             for iris_report in reporter.reports_reportable:
                 success, fail = self._create_abuse_report(iris_report)
-                if not all(success):
+                if len(fail) > 0:
                     self._datastore.notate_report(iris_report.report_id,
                                                   self._datastore.note_csam_failed_to_submit_to_api)
                     report_summary['needs_investigator_review'].append(iris_report.report_id)
                 else:
-                    report_summary['successfully_submitted_to_api'].append(iris_report.report_id)
                     self._datastore.notate_report_and_close(iris_report.report_id,
                                                             self._datastore.note_csam_successfully_parsed)
+                    report_summary['successfully_submitted_to_api'].append(iris_report.report_id)
+
         self._logger.info('CSAM Report Summary - {}'.format(report_summary))
         return report_summary
 

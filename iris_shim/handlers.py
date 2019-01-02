@@ -83,8 +83,9 @@ class CSAM(Handler):
         """
         Retrieves all CSAM incidents from Iris. Performs a variety of checks to determine if this report is valid
         including looking for URLs, Domains, etc. Depending on validation steps we may not create an Abuse Report
-        and in turn will leave the report open in Iris. The CSAM incidents will not be responded to.
-        Ultimately, all valid reports will be submitted to the Abuse API with the corresponding Iris metadata.
+        and in turn will leave the report open in Iris. The CSAM incidents will not be sent any automated notices
+        based on the content of their email. Ultimately, all valid reports will be submitted to the Abuse API with the
+        corresponding Iris metadata.
         """
         iris_reports = self._iris_db.get_child_abuse_reports()
         manager = CSAMReportManager(self._iris_soap, self._api)
