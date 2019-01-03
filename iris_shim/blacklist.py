@@ -506,6 +506,7 @@ _godaddy_domains = {
 }
 
 domains = {
+    'phishlabs.com',
     '2yahoo.com',
     'antihotmail.com',
     'aol.com',
