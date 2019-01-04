@@ -4,14 +4,14 @@ from datetime import datetime
 from mock import patch
 from nose.tools import assert_equal
 
-from iris_shim.manager import CSAMReportManager
+from iris_shim.managers.csam_manager import CSAMReportManager
 from iris_shim.models import Report, Reporter
 
 IncidentInfo = namedtuple('IncidentInfo', 'Subject')
 
 
 class MockIrisSoap(object):
-    note_csam_successfully_parsed = None
+    note_successfully_parsed = None
     note_csam_failed_to_parse = None
     note_csam_failed_to_submit_to_api = None
 
@@ -33,7 +33,7 @@ class MockAbuseAPI(object):
         pass
 
 
-class TestReportManager:
+class TestCSAMReportManager:
     reporter_email = 'dcuinternal@godaddy.com'
 
     def __init__(self):

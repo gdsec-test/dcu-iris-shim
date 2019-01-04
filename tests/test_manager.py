@@ -4,7 +4,7 @@ from datetime import datetime
 from mock import patch
 from nose.tools import assert_equal, assert_false, assert_true
 
-from iris_shim.manager import ReportManager
+from iris_shim.managers.general_manager import GeneralManager
 from iris_shim.models import Report, Reporter
 
 IncidentInfo = namedtuple('IncidentInfo', 'Subject')
@@ -44,7 +44,7 @@ class TestReportManager:
     reporter_email = 'dcuinternal@godaddy.com'
 
     def __init__(self):
-        self._manager = ReportManager(MockIrisSoap(), MockMailer(), MockAbuseAPI())
+        self._manager = GeneralManager(MockIrisSoap(), MockMailer(), MockAbuseAPI())
         self._reporter = Reporter('dcuinternal@godaddy.com')
         self._report = Report('1234', 'PHISHING', self.reporter_email, datetime(2017, 11, 29, 8, 38, 47, 420000))
 
@@ -97,8 +97,8 @@ class TestReportManager:
         assert_false(self._manager._send_customer_interaction(self._reporter))
         assert_true(self._manager._send_customer_interaction(self._reporter))
 
-    @patch.object(ReportManager, '_create_abuse_report', side_effect=[([('malicious-url.com', 'DCU1234')], [])])
-    @patch.object(ReportManager, '_send_customer_interaction')
+    @patch.object(GeneralManager, '_create_abuse_report', side_effect=[([('malicious-url.com', 'DCU1234')], [])])
+    @patch.object(GeneralManager, '_send_customer_interaction')
     def test_action_reports(self, _send_customer_interaction, _create_abuse_report):
         self._report.sources_reportable = {'malicious-url.com'}
         self._reporter.reports_reportable = [self._report]

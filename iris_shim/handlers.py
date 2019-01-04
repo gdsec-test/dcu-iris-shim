@@ -4,7 +4,8 @@ import os
 from iris_shim.connectors.abuse import PhishstoryAPI
 from iris_shim.connectors.iris import IrisDB, IrisSoap
 from iris_shim.connectors.ocm import Mailer
-from iris_shim.manager import CSAMReportManager, ReportManager
+from iris_shim.managers.general_manager import GeneralManager
+from iris_shim.managers.csam_manager import CSAMReportManager
 
 
 class Handler(object):
@@ -34,7 +35,7 @@ class Phishing(Handler):
         Ultimately, all valid reports will be submitted to the Abuse API with the corresponding Iris metadata.
         """
         iris_reports = self._iris_db.get_phishing_reports()
-        manager = ReportManager(self._iris_soap, self._mailer, self._api)
+        manager = GeneralManager(self._iris_soap, self._mailer, self._api)
         manager.process(iris_reports)
 
 
@@ -52,7 +53,7 @@ class NetworkAbuse(Handler):
         Ultimately, all valid reports will be submitted to the Abuse API with the corresponding Iris metadata.
         """
         iris_reports = self._iris_db.get_network_abuse_reports()
-        manager = ReportManager(self._iris_soap, self._mailer, self._api)
+        manager = GeneralManager(self._iris_soap, self._mailer, self._api)
         manager.process(iris_reports)
 
 
@@ -70,7 +71,7 @@ class Malware(Handler):
         Ultimately, all valid reports will be submitted to the Abuse API with the corresponding Iris metadata.
         """
         iris_reports = self._iris_db.get_malware_reports()
-        manager = ReportManager(self._iris_soap, self._mailer, self._api)
+        manager = GeneralManager(self._iris_soap, self._mailer, self._api)
         manager.process(iris_reports)
 
 
