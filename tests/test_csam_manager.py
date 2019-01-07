@@ -12,6 +12,8 @@ IncidentInfo = namedtuple('IncidentInfo', 'Subject')
 
 
 class TestCSAMReportManager:
+    """Testing the CSAM Implementation of the Report Manager"""
+
     reporter_email = 'dcuinternal@godaddy.com'
 
     def __init__(self):
@@ -21,29 +23,6 @@ class TestCSAMReportManager:
                                    datetime(2017, 11, 29, 8, 38, 47, 420000))
         self._csam_report_invalid = Report('2111', 'CHILD_ABUSE', self.reporter_email,
                                            datetime(2017, 11, 29, 8, 38, 47, 420000))
-
-    def test_gather_reports_empty(self):
-        assert_equal(self._csam_manager._gather_reports({}), {})
-
-    @patch.object(MockIrisSoap, 'get_report_info_by_id', return_value=IncidentInfo('we received your feedback'))
-    def test_gather_reports_invalid_report(self, get_report_info_by_id):
-        actual = self._csam_manager._gather_reports({self._csam_report_invalid})
-        self._reporter.reports_invalid = [self._csam_report_invalid]
-
-        assert_equal(actual, {self.reporter_email: self._reporter})
-
-    @patch.object(MockIrisSoap, 'get_report_info_by_id', return_value=IncidentInfo('test subject'))
-    @patch.object(MockIrisSoap, 'get_customer_notes', return_value='malicious-url.com')
-    def test_gather_reports(self, get_customer_notes, get_report_info_by_id):
-        self._csam_report.sources_valid = self._csam_report.sources_reportable = {'malicious-url.com'}
-
-        actual = self._csam_manager._gather_reports([self._csam_report])
-        self._reporter.reports_reportable = [self._csam_report]
-
-        assert_equal(actual, {self.reporter_email: self._reporter})
-
-    def test_action_reports_none(self):
-        assert_equal(self._csam_manager._action_reports({}), {})
 
     @patch.object(MockIrisSoap, 'notate_report')
     @patch.object(MockIrisSoap, 'notate_report_and_close')
@@ -76,11 +55,3 @@ class TestCSAMReportManager:
         report_summary['needs_investigator_review'] = ['1234']
 
         assert_equal(actual.get('needs_investigator_review'), report_summary.get('needs_investigator_review'))
-
-    @patch.object(MockAbuseAPI, 'create_ticket', side_effect=['1', None])
-    def test_csam_create_abuse_report(self, create_ticket):
-        self._csam_report.sources_reportable = ['malicious-url.com', 'malicious-url.com/1/']
-        actual_success, actual_fail = self._csam_manager._create_abuse_report(self._csam_report)
-
-        assert_equal(actual_success, [('malicious-url.com', '1')])
-        assert_equal(actual_fail, ['malicious-url.com/1/'])
