@@ -3,34 +3,12 @@ from datetime import datetime
 
 from mock import patch
 from nose.tools import assert_equal
+from tests.test_mocks import MockAbuseAPI, MockIrisSoap
 
 from iris_shim.managers.csam_manager import CSAMReportManager
 from iris_shim.models import Report, Reporter
 
 IncidentInfo = namedtuple('IncidentInfo', 'Subject')
-
-
-class MockIrisSoap(object):
-    note_successfully_parsed = None
-    note_csam_failed_to_parse = None
-    note_csam_failed_to_submit_to_api = None
-
-    def notate_report_and_close(self, report_id, note):
-        pass
-
-    def notate_report(self, report_id, note):
-        pass
-
-    def get_customer_notes(self, report_id):
-        pass
-
-    def get_report_info_by_id(self, report_id):
-        pass
-
-
-class MockAbuseAPI(object):
-    def create_ticket(self, type, source, report_id, reporter_email, modify_date):
-        pass
 
 
 class TestCSAMReportManager:
