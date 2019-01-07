@@ -5,7 +5,7 @@ from iris_shim.models import Reporter
 
 class ReportManager(object):
     """
-    Abstract base class for processing Abuse types
+    Abstract base class for Report Managers for different Abuse types
     """
     __metaclass__ = abc.ABCMeta
 

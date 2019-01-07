@@ -4,8 +4,8 @@ import os
 from iris_shim.connectors.abuse import PhishstoryAPI
 from iris_shim.connectors.iris import IrisDB, IrisSoap
 from iris_shim.connectors.ocm import Mailer
-from iris_shim.managers.general_manager import GeneralManager
 from iris_shim.managers.csam_manager import CSAMReportManager
+from iris_shim.managers.general_manager import GeneralManager
 
 
 class Handler(object):

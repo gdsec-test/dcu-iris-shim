@@ -3,6 +3,7 @@ import logging
 import os
 import re
 from datetime import datetime, timedelta
+from functools import wraps
 
 import pyodbc
 import suds
@@ -94,6 +95,33 @@ class IrisDB:
         """
         return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_OPS_DIGITAL_CRIMES,
                                                       app_settings.IRIS_SERVICE_ID_CHILD_ABUSE, hours)
+
+
+def create_logger():
+    logger = logging.getLogger(__name__)
+    return logger
+
+
+def validate_notation(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        """
+        A function decorator to assist in the validation of a report_id and note
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        logger = create_logger()
+        if not kwargs.get('report_id'):
+            logger.info('Unable to update report an invalid ReportID was provided')
+            return None
+        elif kwargs.get('note') not in IrisSoap.approved_notes:
+            logger.info('Unable to update report {} with unsupported note {}'.format(kwargs.get('report_id'),
+                                                                                     kwargs.get('note')))
+            return None
+        else:
+            return f(*args, **kwargs)
+    return wrapped
 
 
 class IrisSoap:
@@ -189,21 +217,15 @@ class IrisSoap:
         except Exception as e:
             self._logger.error('Unable to close report {} {}'.format(report_id, e.message))
 
+    @validate_notation
     def notate_report_and_close(self, report_id, note):
         """
         Notates the provided report_id with note and then closes the incident as the Phishstory User.
         """
-        if not report_id:
-            self._logger.info('Unable to close report an invalid ReportID was provided')
-            return
-
-        if note not in self.approved_notes:
-            self._logger.info('Unable to close report {} with unsupported note {}'.format(report_id, note))
-            return
-
         self._add_note_to_report(report_id, note)
         self._close_report(report_id)
 
+    @validate_notation
     def notate_report(self, report_id, note):
         """
         Notates the provided report_id with note and leaves the incident open.
@@ -211,9 +233,4 @@ class IrisSoap:
         :param note:
         :return:
         """
-        if not report_id:
-            self._logger.info('Invalid ReportID was provided')
-        elif note not in self.approved_notes:
-            self._logger.info('Unable to notate report {} with unsupported note {}'.format(report_id, note))
-        else:
-            self._add_note_to_report(report_id, note)
+        self._add_note_to_report(report_id, note)
