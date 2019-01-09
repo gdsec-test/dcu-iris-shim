@@ -13,6 +13,7 @@ from iris_shim.models import Report
 from settings import config_by_name
 
 app_settings = config_by_name[os.getenv('sysenv', 'dev')]()
+logger = logging.getLogger(__name__)
 
 
 class IrisDB:
@@ -97,11 +98,6 @@ class IrisDB:
                                                       app_settings.IRIS_SERVICE_ID_CHILD_ABUSE, hours)
 
 
-def create_logger():
-    logger = logging.getLogger(__name__)
-    return logger
-
-
 def validate_notation(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
@@ -111,7 +107,6 @@ def validate_notation(f):
         :param kwargs:
         :return:
         """
-        logger = create_logger()
         if not kwargs.get('report_id'):
             logger.info('Unable to update report an invalid ReportID was provided')
             return None
