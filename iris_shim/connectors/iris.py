@@ -91,7 +91,8 @@ class IrisSoap:
     _new_abuse_reports = 'New GoDaddy abuse reports should be submitted via https://supportcenter.godaddy.com/AbuseReport'
 
     note_successfully_parsed = 'Do not re-open this incident.\n' \
-                               'This report has been successfully parsed by our Digital Crimes Unit and will be processed as soon as possible.\n' \
+                               'This report has been successfully parsed by our Digital Crimes Unit (DCU) and will be processed as soon as possible.\n' \
+                               'Any action able to be taken by DCU as a result will be notated in the affected CRM shopper account at that time.\n' \
                                'If you have questions please contact us in Slack (#dcueng). ' + _new_abuse_reports
 
     note_failed_to_parse = 'Do not re-open this incident.\n' \
