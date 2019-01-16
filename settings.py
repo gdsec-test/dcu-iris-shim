@@ -12,6 +12,7 @@ class AppConfig(object):
     IRIS_SERVICE_ID_MALWARE = None
     IRIS_SERVICE_ID_NETWORK_ABUSE = None
     IRIS_GROUP_ID_CSA = None
+    IRIS_GROUP_ID_OPS_DIGITAL_CRIMES = None
 
     ABUSE_API_URL = None
 
@@ -36,7 +37,9 @@ class ProductionAppConfig(AppConfig):
     IRIS_SERVICE_ID_PHISHING = 226
     IRIS_SERVICE_ID_MALWARE = 225
     IRIS_SERVICE_ID_NETWORK_ABUSE = 232
+    IRIS_SERVICE_ID_CHILD_ABUSE = 221
     IRIS_GROUP_ID_CSA = 443
+    IRIS_GROUP_ID_OPS_DIGITAL_CRIMES = 409
 
     ABUSE_API_URL = "https://api.godaddy.com/v1/abuse/tickets"
 
@@ -53,7 +56,9 @@ class DevelopmentAppConfig(AppConfig):
     IRIS_SERVICE_ID_PHISHING = 212
     IRIS_SERVICE_ID_MALWARE = 213
     IRIS_SERVICE_ID_NETWORK_ABUSE = 260
+    IRIS_SERVICE_ID_CHILD_ABUSE = 214
     IRIS_GROUP_ID_CSA = 510
+    IRIS_GROUP_ID_OPS_DIGITAL_CRIMES = 510
 
     ABUSE_API_URL = "https://api.dev-godaddy.com/v1/abuse/tickets"
 

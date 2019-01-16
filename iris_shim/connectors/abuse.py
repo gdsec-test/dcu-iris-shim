@@ -42,5 +42,8 @@ class PhishstoryAPI(AbuseAPI):
             response_body = response.json()
             return response_body.get('u_number') if response_body else None
         except Exception as e:
-            self._logger.error('Error posting ticket for {} {}'.format(source, e.message))
+            if type is 'CHILD_ABUSE':
+                self._logger.error('Error posting ticket for CSAM IRIS ID: {} - {}'.format(report_id, e.message))
+            else:
+                self._logger.error('Error posting ticket for {} {}'.format(source, e.message))
             return None

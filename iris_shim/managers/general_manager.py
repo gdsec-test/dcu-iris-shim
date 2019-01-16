@@ -1,58 +1,25 @@
 import logging
 from collections import defaultdict
 
-from iris_shim.models import Reporter
+from iris_shim.managers.interface import ReportManager
 
 
-class ReportManager:
+class GeneralManager(ReportManager):
+    """A Report Manager to handle the transmission of Phishing, Malware, & Netabuse IRIS tickets into the Abuse API"""
+
     def __init__(self, datastore, mailer, api):
         """
         :param datastore: The backend datastore to retrieve information about reports e.g. Iris
         :param mailer: The mailer that we should use to send feedback emails to reporters e.g. OCM
         :param api: The API that we should submit abuse ticket creation requests to.
-        ma
         """
-        self._logger = logging.getLogger(__name__)
+        super(GeneralManager, self).__init__(datastore, api)
 
-        self._datastore = datastore
+        self._logger = logging.getLogger(__name__)
         self._mailer = mailer
-        self._api = api
 
     def process(self, iris_incidents):
-        reporters = self._gather_reports(iris_incidents)
-        return self._action_reports(reporters)
-
-    def _gather_reports(self, iris_incidents):
-        """
-        Iterate over all Iris incidents and validate basic data about each report. Afterward, attempt to parse the email
-        body and extract sources. An unsuccessful parse will mark an iris incident as invalid. A successful parse will
-        result in a combination of valid, reportable, and blacklisted sources.
-
-        Blacklisted sources are sources which we wish to never create Abuse Reports for.
-        Valid sources are sources which meet the criteria for a valid Domain/URL/etc but have already been seen in another report.
-        Reportable sources are valid sources that have not been seen before in other reports.
-        :return:
-        """
-        reporters = {}  # {<reporter_email>: Reporter}
-        sources_seen = set()  # {<source1>, <source2>, ...,}
-
-        for report in iris_incidents:
-            if report.reporter_email not in reporters:
-                reporters[report.reporter_email] = Reporter(report.reporter_email)
-
-            if not self._validate_report(report):
-                reporters[report.reporter_email].add_incident(report)
-                continue
-
-            email_body = self._datastore.get_customer_notes(report.report_id)
-            report.parse(email_body)
-
-            # Update report's sources_reportable to contain all sources we haven't seen and update the master list.
-            report.sources_reportable = report.sources_valid.difference(sources_seen)
-            sources_seen.update(report.sources_reportable)
-
-            reporters[report.reporter_email].add_incident(report)
-        return reporters
+        super(GeneralManager, self).process(iris_incidents)
 
     def _action_reports(self, reporters):
         """
@@ -89,33 +56,12 @@ class ReportManager:
             report_summary[email] = tickets_for_reporter
         return report_summary
 
-    def _create_abuse_report(self, iris_report):
-        """
-        Attempts to create an abuse report for all reportable sources contained within an Iris Report.
-        :param iris_report:
-        :return: tuple containing success and failure e.g. ((<source>, <DCU Ticket>), ...), (<source>, ...)
-        """
-        success, fail = [], []
-
-        for source in iris_report.sources_reportable:
-            ticket = self._api.create_ticket(iris_report.type, source, iris_report.report_id,
-                                             iris_report.reporter_email, iris_report.modify_date)
-            success.append((source, ticket)) if ticket else fail.append(source)
-
-        return success, fail
-
     def _send_customer_interaction(self, reporter):
-        '''
+        """
         Send the appropriate reporter interaction based on whether or not we were able to parse any sources.
         :param reporter:
         :return:
-        '''
+        """
         if reporter.successfully_parsed():
             return self._mailer.report_successfully_parsed(reporter.email)
         return self._mailer.report_failed_to_parse(reporter.email)
-
-    def _validate_report(self, report):
-        data = self._datastore.get_report_info_by_id(report.report_id)
-        email_subject = data.Subject.strip() if data.Subject else ''
-
-        return report.validate(email_subject)

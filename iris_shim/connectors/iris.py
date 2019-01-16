@@ -3,21 +3,24 @@ import logging
 import os
 import re
 from datetime import datetime, timedelta
+from functools import wraps
 
+import pyodbc
 import suds
 import suds.client
 
-import pyodbc
 from iris_shim.models import Report
 from settings import config_by_name
 
 app_settings = config_by_name[os.getenv('sysenv', 'dev')]()
+logger = logging.getLogger(__name__)
 
 
 class IrisDB:
     _service_id_mappings = {app_settings.IRIS_SERVICE_ID_PHISHING: 'PHISHING',
                             app_settings.IRIS_SERVICE_ID_MALWARE: 'MALWARE',
-                            app_settings.IRIS_SERVICE_ID_NETWORK_ABUSE: 'NETWORK_ABUSE'}
+                            app_settings.IRIS_SERVICE_ID_NETWORK_ABUSE: 'NETWORK_ABUSE',
+                            app_settings.IRIS_SERVICE_ID_CHILD_ABUSE: 'CHILD_ABUSE'}
     _connection_string = 'DRIVER=FreeTDS;SERVER={server};PORT={port};DATABASE={database};UID={username};PWD={password};TDS_VERSION=8.0'
 
     def __init__(self, server, port, database, username, password):
@@ -86,6 +89,35 @@ class IrisDB:
         return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_CSA,
                                                       app_settings.IRIS_SERVICE_ID_MALWARE, hours)
 
+    def get_child_abuse_reports(self, hours=1):
+        """
+        Retrieves all Child Abuse specific incidents from Iris for a given time frame
+        :param hours: The number of hours to look back in time since now
+        """
+        return [] if hours < 0 else self._get_reports(app_settings.IRIS_GROUP_ID_OPS_DIGITAL_CRIMES,
+                                                      app_settings.IRIS_SERVICE_ID_CHILD_ABUSE, hours)
+
+
+def validate_notation(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        """
+        A function decorator to assist in the validation of a report_id and note
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        if not kwargs.get('report_id'):
+            logger.info('Unable to update report an invalid ReportID was provided')
+            return None
+        elif kwargs.get('note') not in IrisSoap.approved_notes:
+            logger.info('Unable to update report {} with unsupported note {}'.format(kwargs.get('report_id'),
+                                                                                     kwargs.get('note')))
+            return None
+        else:
+            return f(*args, **kwargs)
+    return wrapped
+
 
 class IrisSoap:
     _new_abuse_reports = 'New GoDaddy abuse reports should be submitted via https://supportcenter.godaddy.com/AbuseReport'
@@ -99,7 +131,12 @@ class IrisSoap:
                            'Our Digital Crimes Unit was not able to automatically determine any valid sources of abuse and have notified the reporter.\n' \
                            'If you believe this ticket has been closed in error please contact us in Slack (#dcueng). ' + _new_abuse_reports
 
-    approved_notes = [note_successfully_parsed, note_failed_to_parse]
+    note_csam_failed_to_parse = 'Unable to parse. Leaving ticket open for Investigator review'
+
+    note_csam_failed_to_submit_to_api = 'Failed to submit to Abuse API. Leaving ticket open for Investigator review'
+
+    approved_notes = [note_successfully_parsed, note_failed_to_parse, note_csam_failed_to_parse,
+                      note_csam_failed_to_submit_to_api]
 
     def __init__(self, wsdl_url):
         self._logger = logging.getLogger(__name__)
@@ -176,17 +213,20 @@ class IrisSoap:
         except Exception as e:
             self._logger.error('Unable to close report {} {}'.format(report_id, e.message))
 
+    @validate_notation
     def notate_report_and_close(self, report_id, note):
         """
         Notates the provided report_id with note and then closes the incident as the Phishstory User.
         """
-        if not report_id:
-            self._logger.info('Unable to close report an invalid ReportID was provided')
-            return
-
-        if note not in self.approved_notes:
-            self._logger.info('Unable to close report {} with unsupported note {}'.format(report_id, note))
-            return
-
         self._add_note_to_report(report_id, note)
         self._close_report(report_id)
+
+    @validate_notation
+    def notate_report(self, report_id, note):
+        """
+        Notates the provided report_id with note and leaves the incident open.
+        :param report_id:
+        :param note:
+        :return:
+        """
+        self._add_note_to_report(report_id, note)
