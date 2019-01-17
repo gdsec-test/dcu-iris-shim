@@ -107,12 +107,11 @@ def validate_notation(f):
         :param kwargs:
         :return:
         """
-        if not kwargs.get('report_id'):
+        if not args[1]:
             logger.info('Unable to update report an invalid ReportID was provided')
             return None
-        elif kwargs.get('note') not in IrisSoap.approved_notes:
-            logger.info('Unable to update report {} with unsupported note {}'.format(kwargs.get('report_id'),
-                                                                                     kwargs.get('note')))
+        elif args[2] not in IrisSoap.approved_notes:
+            logger.info('Unable to update report {} with unsupported note {}'.format(args[1], args[2]))
             return None
         else:
             return f(*args, **kwargs)
