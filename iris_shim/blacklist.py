@@ -8,6 +8,7 @@ The data structures here are flexible and could be lists, sets, dictionaries, et
 
 emails = {
     'francis@get.club',
+    'arjay@get.club',
     'incident-report@bitninja.io',
     'news@portalmedestetica.com.ar',
     'newsletter@advisingnewsfinance.com',
