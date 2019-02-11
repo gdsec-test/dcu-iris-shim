@@ -15,18 +15,18 @@ class Parser:
         :return:
         """
         urls = self.match_sources.get_urls(email_body)
-        urls_blacklist, urls_valid = [], []
+        urls_blacklist, urls_valid = set(), set()
         for url in urls:
-            parent_domains = []
+            parent_domains = set()
             domains = map(lambda x: x.lower(), self.match_sources.get_domains(url))
             for domain in domains:
-                parent_domains.append(self.match_sources.get_parent_domain(domain))
-            urls_blacklist.append(url) if set(parent_domains) & blacklist else urls_valid.append(url)
+                parent_domains.add(self.match_sources.get_parent_domain(domain))
+            urls_blacklist.add(url) if parent_domains & blacklist else urls_valid.add(url)
 
         domains = self.match_sources.get_domains(email_body)
         domains_valid, domains_blacklist = self.match_sources.separate_blacklisted_domains(domains)
         reportable_domains = self.remove_reporter_domain(domains_valid, reporter_email)
-        return set(urls_valid), set(reportable_domains), set(domains_blacklist + urls_blacklist)
+        return urls_valid, reportable_domains, domains_blacklist | urls_blacklist
 
     def parse_netabuse(self, email_body):
         """
@@ -41,7 +41,7 @@ class Parser:
         Check to see if a parsed domain matches the reporters email domain
         :param domain_list: List of domains
         :param reporter_email: Reporters email address
-        :return: domain list with matching domains removed
+        :return: domain set with matching domains removed
         """
         email_domain = reporter_email.split('@')[1]
-        return [domain for domain in domain_list if domain != email_domain]
+        return {domain for domain in domain_list if domain != email_domain}

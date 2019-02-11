@@ -7,9 +7,10 @@ from iris_shim import blacklist
 
 
 class MatchSources:
-    domain_names = re.compile(r'(?i)\b[a-z0-9\-\.]+\.[a-z]{2,63}', re.IGNORECASE | re.MULTILINE)
+    domain_names = re.compile(r'\b[a-z0-9\-\.]+\.[a-z]{2,63}\b', re.IGNORECASE | re.MULTILINE)
     ip_regex = re.compile(r'(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)')
     url = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', re.IGNORECASE | re.MULTILINE)
+    email_id_regex = re.compile(r'\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}\b', re.IGNORECASE | re.MULTILINE)
 
     def __init__(self):
         self._logger = logging.getLogger(__name__)
@@ -24,8 +25,8 @@ class MatchSources:
         if not text:
             self._logger.debug('No email body (Text) was passed to get_domains')
             return []
-
-        found_domains = re.findall(self.domain_names, self._text_cleanup(text))
+        text = re.sub(self.email_id_regex, '', self._text_cleanup(text))
+        found_domains = re.findall(self.domain_names, text)
         return self.is_valid_domain(found_domains)
 
     def get_ip(self, text):
@@ -59,22 +60,22 @@ class MatchSources:
         :param domain_list:
         :return: the domain list with any invalid domain names removed
         """
-        valid_domains = []
+        valid_domains = set()
         if not domain_list:
             return valid_domains
 
         for domain_name in domain_list:
             if get_tld(domain_name, fail_silently=True, fix_protocol=True):
-                valid_domains.append(domain_name)
+                valid_domains.add(domain_name)
         return valid_domains
 
     def separate_blacklisted_domains(self, domain_list):
         """
-        Iterates through provided domain names list and pulls out any blacklisted domain names into their own list
+        Iterates through provided domain names list and pulls out any blacklisted domain names into their own set
         :param domain_list:
-        :return: domain list with blacklisted domains removed, and list containing the blacklisted domains.
+        :return: set of valid domains with blacklisted domains removed, and set containing the blacklisted domains.
         """
-        domains_valid, domains_blacklist = [], []
+        domains_valid, domains_blacklist = set(), set()
 
         if not domain_list:
             return domains_valid, domains_blacklist
@@ -82,9 +83,9 @@ class MatchSources:
         for domain in domain_list:
             parent_domain = self.get_parent_domain(domain)
             if parent_domain and parent_domain.lower() in blacklist.domains:
-                domains_blacklist.append(domain)
+                domains_blacklist.add(domain)
             else:
-                domains_valid.append(domain)
+                domains_valid.add(domain)
 
         return domains_valid, domains_blacklist
 
@@ -112,5 +113,5 @@ class MatchSources:
             replace('(.)', '.'). \
             replace('hXXp', 'http'). \
             replace('URL: www', 'http://www')
-        self._logger.debug('After replace: %s', text)
+        self._logger.debug('After replace: %s', new_text)
         return new_text
