@@ -32,6 +32,11 @@ class TestMatchSources:
         actual = self.match.get_urls(data)
         assert_equal(actual, ['https://pypi.python.org/pypi/stringtheory'])
 
+    def test_get_urls_with_emails(self):
+        data = 'https://pypi.python.org/pypi?e=reporter@company.tld'
+        actual = self.match.get_urls(data)
+        assert_equal(actual, ['https://pypi.python.org/pypi?e=redacted@redacted.tld'])
+
     '''Test Domain Matching'''
 
     def test_get_domains_invalid(self):

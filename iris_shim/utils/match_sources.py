@@ -9,7 +9,7 @@ from iris_shim import blacklist
 class MatchSources:
     domain_names = re.compile(r'\b[a-z0-9\-\.]+\.[a-z]{2,63}\b', re.IGNORECASE | re.MULTILINE)
     ip_regex = re.compile(r'(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)')
-    url = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', re.IGNORECASE | re.MULTILINE)
+    url = re.compile(r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+', re.IGNORECASE | re.MULTILINE)
     email_id_regex = re.compile(r'\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}\b', re.IGNORECASE | re.MULTILINE)
 
     def __init__(self):
@@ -25,8 +25,7 @@ class MatchSources:
         if not text:
             self._logger.debug('No email body (Text) was passed to get_domains')
             return []
-        text = re.sub(self.email_id_regex, '', self._text_cleanup(text))
-        found_domains = re.findall(self.domain_names, text)
+        found_domains = re.findall(self.domain_names, self._text_cleanup(text))
         return self.is_valid_domain(found_domains)
 
     def get_ip(self, text):
@@ -52,7 +51,7 @@ class MatchSources:
             self._logger.debug('No email body (Text) was passed to get_urls')
             return []
 
-        return re.findall(self.url, self._text_cleanup(text))
+        return re.findall(self.url, self._text_cleanup(text, 'redacted@redacted.tld'))
 
     def is_valid_domain(self, domain_list):
         """
@@ -97,7 +96,7 @@ class MatchSources:
         """
         return get_fld(domain, fail_silently=True, fix_protocol=True)
 
-    def _text_cleanup(self, text):
+    def _text_cleanup(self, text, replacement_string=''):
         """
         Replaces obfuscated code from email body into text that regex can more easily go through
         :param text:
@@ -113,5 +112,6 @@ class MatchSources:
             replace('(.)', '.'). \
             replace('hXXp', 'http'). \
             replace('URL: www', 'http://www')
+        new_text = re.sub(self.email_id_regex, replacement_string, new_text)
         self._logger.debug('After replace: %s', new_text)
         return new_text
