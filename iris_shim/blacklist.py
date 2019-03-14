@@ -34,6 +34,9 @@ subjects = {
 
 # A comprehensive list of GoDaddy domains that may contain a valid login page (source: Phishlabs)
 _godaddy_domains = {
+    'df.eu',
+    'heg.systems',
+    'heg.com',
     'bluerazor.com',
     'domainaftermarket.com',
     'domaincontrol.com',
@@ -507,8 +510,18 @@ _godaddy_domains = {
 }
 
 domains = {
+    'virustotal.com',
+    'phishtank.com',
+    'arin.net',
+    'netcraft.com',
+    'abuse.ch',
+    'xarf.org',
+    'x-arf.org',
+    'lexsi.com',
+    'amazon.com',
+    'outlook.com',
+    'microsoft.com',
     'phishlabs.com',
-    '2yahoo.com',
     'antihotmail.com',
     'aol.com',
     'comcast.net',
@@ -520,6 +533,9 @@ domains = {
     'gmail.com',
     'google.com',
     'youtube.com',
+    'facebook.com',
+    'whatsapp.com',
+    'twitter.com',
     'hostgator.com',
     'hostgator.com.br',
     'hotmail.com',
@@ -535,7 +551,9 @@ domains = {
     'yahoo.com',
     'yahoo.com.ar',
     'yahoo.com.br',
+    '2yahoo.com',
     'malwarebytes.com',
+    'hosts-files.net',
     'abuseipdb.com',
     'ultradns.net'
     'ultradns.org',
