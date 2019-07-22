@@ -14,7 +14,7 @@ All of this functionality allows us to easily parse and submit tickets to the Ab
 ## Cloning
  To clone the repository via SSH perform the following
  ```
- git clone git@github.secureserver.net:ITSecurity/iris_shim.git
+ git clone git@github.secureserver.net:digital-crimes/iris_shim.git
  ```
 
  It is recommended that you clone this project into a pyvirtualenv or equivalent virtual environment.
