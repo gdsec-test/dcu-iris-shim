@@ -43,5 +43,6 @@ class Parser:
         :param reporter_email: Reporters email address
         :return: domain set with matching domains removed
         """
-        email_domain = reporter_email.split('@')[1]
-        return {domain for domain in domain_list if domain != email_domain}
+        if not isinstance(reporter_email, basestring) or '@' not in reporter_email:
+            return domain_list
+        return {domain for domain in domain_list if domain != reporter_email.split('@')[1]}

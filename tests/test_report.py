@@ -5,6 +5,7 @@ from nose.tools import (assert_equal, assert_false, assert_in, assert_is_none,
 
 from iris_shim.blacklist import emails
 from iris_shim.models import Report
+from iris_shim.parser import Parser
 
 
 class TestReport(object):
@@ -66,3 +67,14 @@ class TestReport(object):
 
         assert_in('http://www.comicsN.beer', self._report1.sources_valid)
         assert_in('www.riskiq.net', self._report1.sources_blacklist)
+
+    def test_remove_reporter_domain(self):
+        parser = Parser()
+        domain_list = ['comicsn.beer', 'impcat.net', 'coolexample.com']
+        noemail = parser.remove_reporter_domain(domain_list, None)
+        notanemail = parser.remove_reporter_domain(domain_list, 'tesaaronbean.com')
+        email = parser.remove_reporter_domain(domain_list, 'paddy@comicsn.beer')
+
+        assert_equal(domain_list, noemail)
+        assert_equal(domain_list, notanemail)
+        assert_equal(set(['impcat.net', 'coolexample.com']), email)
