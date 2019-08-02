@@ -20,7 +20,8 @@ emails = {
     'newsletter@sinun-tarjouksesi.com',
     'noreply@bluehost.com',
     'noreply@hotelexclusives.com',
-    'noreply@justdeals.com'
+    'noreply@justdeals.com',
+    'donotreply-abuse@radix.email'
 }
 
 subjects = {
