@@ -3,10 +3,10 @@ from datetime import datetime
 
 from mock import patch
 from nose.tools import assert_equal
-from tests.test_mocks import MockAbuseAPI, MockIrisSoap
 
 from iris_shim.managers.csam_manager import CSAMReportManager
 from iris_shim.models import Report, Reporter
+from tests.test_mocks import MockAbuseAPI, MockIrisSoap
 
 IncidentInfo = namedtuple('IncidentInfo', 'Subject')
 
