@@ -57,12 +57,12 @@ class TestReport(object):
         email_body1 = 'http://www.comicsN.beer http://dcuinternal@Godaddy.com more text example.com, Riskiq.com, theaaronbean.com'
         self._report1.parse(email_body1)
 
-        assert_in('http://www.comicsN.beer', self._report1.sources_valid)
-        assert_in('Riskiq.com', self._report1.sources_blacklist)
+        assert_in('http://www.comicsn.beer', self._report1.sources_valid)
+        assert_in('riskiq.com', self._report1.sources_blacklist)
 
     def test_parse_subdomain(self):
         email_body1 = 'http://www.comicsN.beer http://dcuinternal@Godaddy.com http://www.godaddy.com www.godaddy.com www.riskiq.net'
         self._report1.parse(email_body1)
 
-        assert_in('http://www.comicsN.beer', self._report1.sources_valid)
+        assert_in('http://www.comicsn.beer', self._report1.sources_valid)
         assert_in('www.riskiq.net', self._report1.sources_blacklist)
