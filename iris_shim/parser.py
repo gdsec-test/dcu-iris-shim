@@ -14,6 +14,12 @@ class Parser:
         :param reporter_email: IRIS reporting email address
         :return:
         """
+        if reporter_email:
+            reporter_email = reporter_email.lower()
+
+        if email_body:
+            email_body = email_body.lower()
+
         urls = self.match_sources.get_urls(email_body)
         urls_blacklist, urls_valid, domains_in_urls = set(), set(), set()
 

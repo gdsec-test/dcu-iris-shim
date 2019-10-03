@@ -10,10 +10,11 @@ class TestParser:
 
     def test_parse_phish_malware_remove_reporter_domain(self):
         email = '''
-                This is an email that contains valid domains impcat.net and coolexample.com. It also
-                contains valid reporter domain comicsn.beer
+                This is an email that contains valid domains impcat.net and Coolexample.com. It also
+                contains valid reporter domain comicsn.beer which we want to match regardless of case and
+                be removed from the reportable domains list
                 '''
-        _, domains, _ = self._parser.parse_phish_malware(email, 'paddy@comicsn.beer')
+        _, domains, _ = self._parser.parse_phish_malware(email, 'paddy@Comicsn.beer')
         assert_equal(domains, {'impcat.net', 'coolexample.com'})
         _, domains, _ = self._parser.parse_phish_malware(email, None)
         assert_equal(domains, {'impcat.net', 'coolexample.com', 'comicsn.beer'})
