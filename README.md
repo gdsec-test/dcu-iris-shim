@@ -65,8 +65,8 @@ make tools   # Runs both Flake8 and isort
 * `IRIS_PASSWORD` (Password for IRIS)
 * `API_KEY` (SSO Key for Abuse API)
 * `API_SECRET` (SSO Secret for Abuse API)
-* `OCM_CERT` Path to phishstory.int certificate file (for sending mail via HERMES)
-* `OCM_KEY` Path to phishstory.int key file (for sending mail via HERMES)
+* `OCM_CERT` Path to phishstory.int certificate file (for sending mail via Hermes)
+* `OCM_KEY` Path to phishstory.int key file (for sending mail via Hermes)
 * `EMAIL_RECIPIENT` (The email address you want non-shopper emails sent to while testing, instead of emailing the reporter. e.g. user@example.com)
 
 
