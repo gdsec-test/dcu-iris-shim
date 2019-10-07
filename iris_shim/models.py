@@ -26,12 +26,23 @@ class Report:
     def __repr__(self):
         return 'Report({!r}, {!r}, {!r}, {!r})'.format(self.report_id, self.type, self.reporter_email, self.modify_date)
 
+    def _find_blacklist_subject_in_email_subject(self, email_subject):
+        """
+        Verifies if any blacklisted subject string appears in the email subject string
+        :param email_subject: subject string of the email being parsed
+        :return: boolean
+        """
+        for b_sub in blacklist.subjects:
+            if b_sub in email_subject:
+                return True
+        return False
+
     def validate(self, email_subject):
         """
         Perform basic validation on this report before attempting to parse the report itself.
         This should filter out reports that are submitted by spammers, known bad subjects, etc.
         """
-        if self.reporter_email in blacklist.emails or email_subject in blacklist.subjects:
+        if self.reporter_email in blacklist.emails or self._find_blacklist_subject_in_email_subject(email_subject):
             self.valid, self.invalid_reason = False, 'blacklist'
         return self.valid
 

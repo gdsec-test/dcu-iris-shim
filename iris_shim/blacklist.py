@@ -29,8 +29,9 @@ subjects = {
     'go daddy, llc  domain list suspended for reported abuse',
     'report of .xyz domain suspensions & unsuspensions',
     'we received your feedback',
-    'wild west domains, llc  domain list suspended for reported abuse'
-    'your phishing report was received'
+    'wild west domains, llc  domain list suspended for reported abuse',
+    'your phishing report was received',
+    'godaddy monitoring:'
 }
 
 # A comprehensive list of GoDaddy domains that may contain a valid login page (source: Phishlabs)

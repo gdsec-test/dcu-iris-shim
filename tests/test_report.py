@@ -21,13 +21,19 @@ class TestReport(object):
         assert_false(self._report.valid)
         assert_equal(self._report.invalid_reason, 'blacklist')
 
-    def test_validate_blacklist_subject(self):
+    def test_validate_blacklist_full_subject(self):
         self._report.validate('we received your feedback')
 
         assert_false(self._report.valid)
         assert_equal(self._report.invalid_reason, 'blacklist')
 
-    def test_validate(self):
+    def test_validate_blacklist_partial_subject(self):
+        self._report.validate('godaddy monitoring: http://wfswholesalefloors.com - security warning')
+
+        assert_false(self._report.valid)
+        assert_equal(self._report.invalid_reason, 'blacklist')
+
+    def test_validate_blacklist_no_matching_subject(self):
         self._report.validate('valid subject')
 
         assert_true(self._report.valid)
