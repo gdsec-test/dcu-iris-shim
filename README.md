@@ -1,4 +1,6 @@
 # Iris Shim
+
+## Overview
 Iris Shim parses abuse reports from the Iris data store. It currently supports parsing Phishing, Malware, Network Abuse and CSAM.
 
 It performs a view core functions:
@@ -11,6 +13,14 @@ It performs a view core functions:
 
 All of this functionality allows us to easily parse and submit tickets to the Abuse API that have been submitted via email.
 
+## Table of Contents
+  1. [Cloning](#cloning)
+  2. [Installing Dependencies](#installing-dependencies)
+  3. [Deploying](#deploying)
+  4. [Testing](#testing)
+  5. [Style and Standards](#style-and-standards)
+  6. [Running Locally](#running-locally)
+
 ## Cloning
  To clone the repository via SSH perform the following
  ```
@@ -22,7 +32,7 @@ All of this functionality allows us to easily parse and submit tickets to the Ab
 ## Installing Dependencies
 To install all dependencies for development and testing simply run `make`.
 
- ## Deploying
+## Deploying
 This code can be deployed as a CRON job in any environment or simply run once. For running via CRON, first define your CRON file and initialize it (CentOs7 example) via
 ```
 systemctl start crond
@@ -50,14 +60,14 @@ make tools   # Runs both Flake8 and isort
 
  ## Running Locally
  If you would like to run Iris Shim locally you will need to specify the following environment variables
-1. `sysenv` (dev, ote, prod)
-2. `IRIS_USERNAME` (User for IRIS)
-3. `IRIS_PASSWORD` (Password for IRIS)
-4. `API_KEY` (SSO Key for Abuse API)
-5. `API_SECRET` (SSO Secret for Abuse API)
-6. `OCM_CERT` (OCM CERT)
-7. `OCM_KEY` (OCM KEY)
-8. `EMAIL_RECIPIENT` (The email address you want non-shopper emails sent to while testing, instead of emailing the reporter. e.g. user@example.com)
+* `sysenv` (dev, ote, prod)
+* `IRIS_USERNAME` (User for IRIS)
+* `IRIS_PASSWORD` (Password for IRIS)
+* `API_KEY` (SSO Key for Abuse API)
+* `API_SECRET` (SSO Secret for Abuse API)
+* `OCM_CERT` Path to phishstory.int certificate file (for sending mail via HERMES)
+* `OCM_KEY` Path to phishstory.int key file (for sending mail via HERMES)
+* `EMAIL_RECIPIENT` (The email address you want non-shopper emails sent to while testing, instead of emailing the reporter. e.g. user@example.com)
 
 
 The project can then be run locally by running `python run.py`
