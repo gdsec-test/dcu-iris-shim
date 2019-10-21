@@ -16,6 +16,8 @@ All of this functionality allows us to easily parse and submit tickets to the Ab
 ## Table of Contents
   1. [Cloning](#cloning)
   2. [Installing Dependencies](#installing-dependencies)
+      1. [Ubuntu Based System Dependencies](#ubuntu-based-system-dependencies)
+      2. [Project Dependencies](#project-dependencies)
   3. [Deploying](#deploying)
   4. [Testing](#testing)
   5. [Style and Standards](#style-and-standards)
@@ -30,6 +32,30 @@ All of this functionality allows us to easily parse and submit tickets to the Ab
  It is recommended that you clone this project into a pyvirtualenv or equivalent virtual environment.
 
 ## Installing Dependencies
+### Ubuntu Based System Dependencies
+For connecting to the IRIS DB locally with a Ubuntu based development system, you will need to ensure that you have the ODBC Driver Manager packages installed and FreeTDS driver settings specified.
+```
+sudo apt-get install unixodbc-dev unixodbc-bin unixodbc
+```
+
+Edit your odbcinst.ini file. 
+```
+sudo vim /etc/odbcinst.ini
+```
+Add the following info for the FreeTDS Driver and save the file.
+```
+[FreeTDS]
+Description = TDS driver (Sybase/MS SQL)
+# Some installations may differ in the paths
+Driver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so
+Setup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so
+CPTimeout =
+CPReuse =
+FileUsage = 1
+TDS Version = 8.0
+```
+
+### Project Dependencies
 To install all dependencies for development and testing simply run `make`.
 
 ## Deploying
