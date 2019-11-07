@@ -65,7 +65,7 @@ class MatchSources:
 
         for domain_name in domain_list:
             if get_tld(domain_name, fail_silently=True, fix_protocol=True):
-                valid_domains.add(domain_name)
+                valid_domains.add(domain_name.lower())
         return valid_domains
 
     def separate_blacklisted_domains(self, domain_list):

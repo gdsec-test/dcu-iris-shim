@@ -11,7 +11,7 @@ class TestParser:
     def test_parse_phish_malware_remove_reporter_domain(self):
         email = '''
                 This is an email that contains valid domains impcat.net and Coolexample.com. It also
-                contains valid reporter domain comicsn.beer which we want to match regardless of case and
+                contains valid reporter domain comicsN.beer which we want to match regardless of case and
                 be removed from the reportable domains list
                 '''
         _, domains, _ = self._parser.parse_phish_malware(email, 'paddy@Comicsn.beer')
@@ -24,12 +24,12 @@ class TestParser:
     def test_parse_phish_malware_remove_domain_in_url(self):
         email = '''
                 This is an email that contains valid domains impcat.net and coolexample.com. It also
-                contains valid urls http://coolexample.com/phishing and http://abc.com/phishing .
+                contains valid urls http://Coolexample.com/phishing and http://abc.com/phishing .
                 Also godaddy.com is blacklisted.
                 '''
         urls, domains, domains_blacklist = self._parser.parse_phish_malware(email, None)
         assert_equal(domains, {'impcat.net'})
-        assert_equal(urls, {'http://coolexample.com/phishing', 'http://abc.com/phishing'})
+        assert_equal(urls, {'http://Coolexample.com/phishing', 'http://abc.com/phishing'})
         assert_equal(domains_blacklist, {'godaddy.com'})
 
     def test_parse_netabuse(self):
