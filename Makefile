@@ -2,6 +2,7 @@ REPONAME=digital-crimes/iris_shim
 BUILDROOT=$(HOME)/dockerbuild/$(REPONAME)
 DOCKERREPO=docker-dcu-local.artifactory.secureserver.net/iris_shim
 DATE=$(shell date)
+BUILD_BRANCH=origin/master
 SHELL=/bin/bash
 
 # libraries we need to stage for pip to install inside Docker build
