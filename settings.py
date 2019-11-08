@@ -51,7 +51,7 @@ class ProductionAppConfig(AppConfig):
 
 class DevelopmentAppConfig(AppConfig):
     IRIS_WSDL = "https://iris-ws.dev.int.godaddy.com/iriswebservice.asmx?WSDL"
-    IRIS_SERVER = 'P3DWSQL07\\CSS'
+    IRIS_SERVER = '10.32.76.23\\CSS'
 
     IRIS_SERVICE_ID_PHISHING = 212
     IRIS_SERVICE_ID_MALWARE = 213

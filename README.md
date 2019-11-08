@@ -18,13 +18,15 @@ All of this functionality allows us to easily parse and submit tickets to the Ab
   2. [Installing Dependencies](#installing-dependencies)
       1. [Ubuntu Based System Dependencies](#ubuntu-based-system-dependencies)
       2. [Project Dependencies](#project-dependencies)
-  3. [Deploying](#deploying)
-  4. [Testing](#testing)
-  5. [Style and Standards](#style-and-standards)
-  6. [Running Locally](#running-locally)
+  3. [Building](#building)
+  4. [Deploying](#deploying)
+  5. [Testing](#testing)
+  6. [Style and Standards](#style-and-standards)
+  7. [Running Locally](#running-locally)
 
 ## Cloning
  To clone the repository via SSH perform the following
+
  ```
  git clone git@github.secureserver.net:digital-crimes/iris_shim.git
  ```
@@ -58,14 +60,21 @@ TDS Version = 8.0
 ### Project Dependencies
 To install all dependencies for development and testing simply run `make`.
 
-## Deploying
-This code can be deployed as a CRON job in any environment or simply run once. For running via CRON, first define your CRON file and initialize it (CentOs7 example) via
-```
-systemctl start crond
-```
-If you would like to run this script once then simply run `python run.py`
+## Building
+Building a local Docker image for the respective development environments can be achieved by
 
-Note: You will still need to define all necessary environment variables. This can be done in the CRON file or elsewhere in your environment.
+```
+make [dev, prod]
+```
+
+## Deploying
+Deploying the Docker image to Kubernetes can be achieved via
+
+```
+make [dev, prod]-deploy
+```
+
+You must also ensure you have the proper push permissions to Artifactory or you may experience a `Forbidden` message.
 
 ## Testing
 ```
@@ -75,7 +84,7 @@ make testcov  # runs tests with coverage
 
 ## Style and Standards
 
-All deploys must pass Flake8 linting and all unit tests which are baked into the Makefile.
+All deploys must pass Flake8 linting and all unit tests which are baked into the [Makefile](Makefile).
 
 There are a few commands that might be useful to ensure consistent Python style:
 ```
@@ -86,7 +95,7 @@ make tools   # Runs both Flake8 and isort
 
  ## Running Locally
  If you would like to run Iris Shim locally you will need to specify the following environment variables
-* `sysenv` (dev, ote, prod)
+* `sysenv` (dev, prod)
 * `IRIS_USERNAME` (User for IRIS)
 * `IRIS_PASSWORD` (Password for IRIS)
 * `API_KEY` (SSO Key for Abuse API)

@@ -1,0 +1,78 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: iris-shim
+  namespace: abuse-api-dev
+  labels:
+    app: iris-shim
+spec:
+  schedule: "0 */2 * * *"
+
+  # Deadline in seconds for starting the job if it misses its scheduled time.
+  startingDeadlineSeconds: 60
+
+  # The cron job does not allow concurrent runs
+  # if it is time for a new job run and the previous job run hasn't finished yet, the cron job skips the new job run
+  concurrencyPolicy: Forbid
+
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: iris-shim
+        spec:
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: dcu-artifactory-creds
+
+          containers:
+            - name: iris-shim
+              imagePullPolicy: Always
+              image: docker-dcu-local.artifactory.secureserver.net/iris_shim:dev
+              env:
+                - name: sysenv
+                  value: dev
+                - name: BUILD_DATE
+                  value: THIS_STRING_IS_REPLACED_DURING_BUILD
+                - name: LOG_CFG
+                  value: logging.yaml
+
+                - name: IRIS_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: db-iris-shim
+                      key: username
+                - name: IRIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: db-iris-shim
+                      key: password
+                - name: API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: auth-abuse-api-iris-shim
+                      key: key
+                - name: API_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: auth-abuse-api-iris-shim
+                      key: secret
+
+                - name: OCM_CERT
+                  value: /ocm_certs/tls.crt
+                - name: OCM_KEY
+                  value: /ocm_certs/tls.key
+
+              volumeMounts:
+                - name: tls-ocm-files
+                  mountPath: /ocm_certs
+                  readOnly: true
+
+          volumes:
+            - name: tls-ocm-files
+              secret:
+                secretName: tls-phishnet

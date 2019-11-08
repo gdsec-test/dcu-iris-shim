@@ -1,3 +1,12 @@
+REPONAME=digital-crimes/iris_shim
+BUILDROOT=$(HOME)/dockerbuild/$(REPONAME)
+DOCKERREPO=docker-dcu-local.artifactory.secureserver.net/iris_shim
+DATE=$(shell date)
+SHELL=/bin/bash
+
+# libraries we need to stage for pip to install inside Docker build
+PRIVATE_PIPS=git@github.secureserver.net:digital-crimes/hermes.git
+
 all: env
 
 env:
@@ -9,7 +18,6 @@ env:
 flake8:
 	@echo "----- Running linter -----"
 	flake8 --config ./.flake8 .
-
 
 .PHONY: isort
 isort:
@@ -28,3 +36,51 @@ test:
 testcov:
 	@echo "----- Running tests with coverage -----"
 	nosetests tests --with-coverage --cover-erase --cover-package=iris_shim
+
+.PHONY: prep
+prep: tools test
+	@echo "----- preparing $(REPONAME) build -----"
+	# stage pips we will need to install in Docker build
+	mkdir -p $(BUILDROOT)/private_pips && rm -rf $(BUILDROOT)/private_pips/*
+	for entry in $(PRIVATE_PIPS) ; do \
+		cd $(BUILDROOT)/private_pips && git clone $$entry ; \
+	done
+
+	# copy the app code to the build root
+	cp -rp ./* $(BUILDROOT)
+
+.PHONY: prod
+prod: prep
+	@echo "----- building $(REPONAME) prod -----"
+	read -p "About to build production image from $(BUILD_BRANCH) branch. Are you sure? (Y/N): " response ; \
+	if [[ $$response == 'N' || $$response == 'n' ]] ; then exit 1 ; fi
+	if [[ `git status --porcelain | wc -l` -gt 0 ]] ; then echo "You must stash your changes before proceeding" ; exit 1 ; fi
+	git fetch && git checkout $(BUILD_BRANCH)
+	$(eval COMMIT:=$(shell git rev-parse --short HEAD))
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/' $(BUILDROOT)/k8s/prod/cronjob.yaml
+	sed -ie 's/REPLACE_WITH_GIT_COMMIT/$(COMMIT)/' $(BUILDROOT)/k8s/prod/cronjob.yaml
+	docker build -t $(DOCKERREPO):$(COMMIT) $(BUILDROOT)
+	git checkout -
+
+.PHONY: dev
+dev: prep
+	@echo "----- building $(REPONAME) dev -----"
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/dev/cronjob.yaml
+	docker build -t $(DOCKERREPO):dev $(BUILDROOT)
+
+.PHONY: prod-deploy
+prod-deploy: prod
+	@echo "----- deploying $(REPONAME) prod -----"
+	docker push $(DOCKERREPO):$(COMMIT)
+	kubectl --context prod-dcu apply -f $(BUILDROOT)/k8s/prod/cronjob.yaml --record
+
+.PHONY: dev-deploy
+dev-deploy: dev
+	@echo "----- deploying $(REPONAME) dev -----"
+	docker push $(DOCKERREPO):dev
+	kubectl --context dev-dcu apply -f $(BUILDROOT)/k8s/dev/cronjob.yaml --record
+
+.PHONY: clean
+clean:
+	@echo "----- cleaning $(REPONAME) app -----"
+	rm -rf $(BUILDROOT)

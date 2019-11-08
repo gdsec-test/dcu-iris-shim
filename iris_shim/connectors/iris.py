@@ -35,9 +35,7 @@ class IrisDB:
         :param size: Integer representing the number of results to return in the cursor
         """
         try:
-            connection = pyodbc.connect(self._database_url)
-            connection.autocommit = True
-            connection.timeout = 0
+            connection = pyodbc.connect(self._database_url, autocommit=True)
             cursor = connection.cursor()
             cursor.execute(query)
             while True:
