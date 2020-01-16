@@ -561,7 +561,17 @@ domains = {
     'ultradns.org',
     'ultradns.info',
     'ultradns.co.uk',
-    'dnsmadeeasy.com'
+    'dnsmadeeasy.com',
+    'spamresponse.com',
+    'tempestsi.com',
+    'tempest.com.br',
+    'bpipersonalloans.com',
+    'kanegosyo.com',
+    'bpiautoloans.com',
+    'bpiloans.com',
+    'bpiautomadness.com',
+    'bpihousingloans.com',
+    'openbugbounty.org'
 }
 
 domains.update(_godaddy_domains)
