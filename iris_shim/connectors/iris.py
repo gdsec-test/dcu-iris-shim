@@ -150,7 +150,7 @@ class IrisSoap:
         h = HTMLParser.HTMLParser()
         notes_text = h.unescape(notes_text)
         # Remove any HTML markup
-        p = re.compile(r'<.*?>')
+        p = re.compile(r'[<>]')
         return p.sub(' ', notes_text)
 
     def get_report_info_by_id(self, report_id):
