@@ -33,7 +33,7 @@ class Parser:
 
         domains = self.match_sources.get_domains(email_body)
         domains_valid, domains_blacklist = self.match_sources.separate_blacklisted_domains(domains)
-        reportable_domains = self._remove_reporter_domain(domains_valid, reporter_email)
+        reportable_domains = Parser._remove_reporter_domain(domains_valid, reporter_email)
         reportable_domains.difference_update(domains_in_urls)
         return urls_valid, reportable_domains, domains_blacklist.union(urls_blacklist)
 
@@ -45,13 +45,15 @@ class Parser:
         """
         return set(self.match_sources.get_ip(email_body))
 
-    def _remove_reporter_domain(self, domain_list, reporter_email):
+    @staticmethod
+    def _remove_reporter_domain(domain_list, reporter_email):
         """
-        Check to see if a parsed domain matches the reporters email domain
+        Check to see if a parsed domain ends with the reporters email domain, which covers sub-domains
         :param domain_list: List of domains
         :param reporter_email: Reporters email address
         :return: domain set with matching domains removed
         """
         if not isinstance(reporter_email, basestring) or '@' not in reporter_email:
             return domain_list
-        return {domain for domain in domain_list if domain != reporter_email.split('@')[1]}
+        reporter_email_domain = reporter_email.split('@')[1]
+        return {domain for domain in domain_list if not domain.endswith(reporter_email_domain)}
