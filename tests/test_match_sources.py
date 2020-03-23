@@ -1,6 +1,6 @@
 import re
 
-from nose.tools import assert_equal, assert_false, assert_set_equal
+from nose.tools import assert_equal, assert_false
 
 from iris_shim.utils.match_sources import MatchSources
 

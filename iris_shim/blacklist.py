@@ -42,18 +42,18 @@ subjects = {
 # (^|\.) = string is either the start of the line or prefaced with a dot
 # \\S* = zero or more non-whitespace characters
 subdomain_filters = {
-    '^(50analytics|bounce|certs|checkspam|img|ns1|ns2|sso|supportcenter|www)\.secureserver\.net',
-    '(^|\.)em\.secureserver\.net',  # example match: "em." & "*.em."
-    '(gemwbe|smtp|wbeout)\\S*\.secureserver\.net',  # example match: "gemwbe." & "genwbe*."
-    '\\S*imagesak\.secureserver\.net',  # example match: "*.imagesak.", "*imagesak." & "imagesak."
-    '^mailstore\\S*\.secureserver\.net',  # example match: "mailstore." & "mailstore*."
-    '^secureserver\.net',  # exact match on "secureserver.net"
+    '^(50analytics|bounce|certs|checkspam|img|ns1|ns2|sso|supportcenter|www)\\.secureserver\\.net',
+    '(^|\\.)em\\.secureserver\\.net',  # example match: "em." & "*.em."
+    '(gemwbe|smtp|wbeout)\\S*\\.secureserver\\.net',  # example match: "gemwbe." & "genwbe*."
+    '\\S*imagesak\\.secureserver\\.net',  # example match: "*.imagesak.", "*imagesak." & "imagesak."
+    '^mailstore\\S*\\.secureserver\\.net',  # example match: "mailstore." & "mailstore*."
+    '^secureserver\\.net',  # exact match on "secureserver.net"
 }
 
 # Employs python regex to filter out matching URLs
 # (/|\.) = string is either prefaced by a protocol like "http://" or prefaced with a dot
 url_filters = {
-    '(/|\.)secureserver\.net/whois'  # example match "http://secureserver." & "*.secureserver."
+    '(/|\\.)secureserver\\.net/whois'  # example match "http://secureserver." & "*.secureserver."
 }
 
 # A comprehensive list of GoDaddy domains that may contain a valid login page (source: Phishlabs)
