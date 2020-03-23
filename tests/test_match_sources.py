@@ -1,6 +1,6 @@
 import re
 
-from nose.tools import assert_equal, assert_false
+from nose.tools import assert_equal, assert_false, assert_set_equal
 
 from iris_shim.utils.match_sources import MatchSources
 
@@ -26,17 +26,17 @@ class TestMatchSources:
     def test_get_urls_plain(self):
         data = 'https://pypi.python.org/pypi/stringtheory'
         actual = self.match.get_urls(data)
-        assert_equal(actual, ['https://pypi.python.org/pypi/stringtheory'])
+        assert_equal(actual, {'https://pypi.python.org/pypi/stringtheory'})
 
     def test_get_urls_munged(self):
         data = 'hxxps://pypi[dot]python[dot]org/pypi/stringtheory'
         actual = self.match.get_urls(data)
-        assert_equal(actual, ['https://pypi.python.org/pypi/stringtheory'])
+        assert_equal(actual, {'https://pypi.python.org/pypi/stringtheory'})
 
     def test_get_urls_with_emails(self):
         data = 'https://pypi.python.org/pypi?e=reporter@company.tld'
         actual = self.match.get_urls(data)
-        assert_equal(actual, ['https://pypi.python.org/pypi?e=redacted@redacted.tld'])
+        assert_equal(actual, {'https://pypi.python.org/pypi?e=redacted@redacted.tld'})
 
     '''Test Domain Matching'''
 
@@ -132,3 +132,57 @@ class TestMatchSources:
         data = '#@%^%#$@#$@#.com thisis"notallowed"@example.com'
         actual = re.findall(self.match.email_id_regex, data)
         assert_equal(actual, [])
+
+    '''Test Regex Domain Filtering'''
+
+    def test_domains_with_regex_match(self):
+        data = {'252fimagesak.secureserver.net',
+                '2fimagesak.secureserver.net',
+                '50analytics.secureserver.net',
+                'a2nlsmtp01-02.prod.iad2.secureserver.net',
+                'bounce.secureserver.net',
+                'bounces.em.secureserver.net',
+                'certs.secureserver.net',
+                'checkspam.secureserver.net',
+                'em.secureserver.net',
+                'fimagesak.secureserver.net',
+                'imagesak.secureserver.net',
+                'img.secureserver.net',
+                'm117.em.secureserver.net',
+                'mailstore1.europe.secureserver.net',
+                'mailstore1.secureserver.net',
+                'ns1.secureserver.net',
+                'ns2.secureserver.net',
+                'p3plgemwbe27-01.prod.phx3.secureserver.net',
+                'p3plibsmtp01-10.prod.phx3.secureserver.net',
+                'p3plibsmtp03-14.prod.phx3.secureserver.net',
+                'p3plsmtp02-03-25.prod.phx3.secureserver.net',
+                'p3plwbeout01-01.prod.phx3.secureserver.net',
+                'secureserver.net',
+                'smtp.asia.secureserver.net',
+                'smtp.secureserver.net',
+                'smtpout.secureserver.net',
+                'sso.secureserver.net',
+                'supportcenter.secureserver.net',
+                'wbeout.secureserver.net',
+                'www.secureserver.net',
+                'impcat.com'}
+        expected = {'impcat.com'}
+        assert_equal(self.match.remove_domains_via_regex(data), expected)
+
+    '''Test Regex URL Filtering'''
+
+    # Will filter out all URLs
+    def test_data_with_all_regex_match(self):
+        data = {'http://www.secureserver.net/whois', 'http://secureserver.net/whois'}
+        assert_false(self.match.remove_urls_via_regex(data))
+
+    # Will filter out some URLs
+    def test_data_with_some_regex_match(self):
+        data = {'http://www.secureserver.net/whois', 'http://secureserver.net/whois', 'http://secureserver.net/'}
+        assert_equal(self.match.remove_urls_via_regex(data), {'http://secureserver.net/'})
+
+    # Wont filter out any URLs
+    def test_data_with_no_regex_match(self):
+        data = {'https://mysecureserver.net/whois', 'http://www.secureserver.net'}
+        assert_equal(self.match.remove_urls_via_regex(data), data)

@@ -18,20 +18,24 @@ class Parser:
             reporter_email = reporter_email.lower()
 
         urls = self.match_sources.get_urls(email_body)
+        # Remove any URLs that match regex
+        urls = self.match_sources.remove_urls_via_regex(urls)
         urls_blacklist, urls_valid, domains_in_urls = set(), set(), set()
 
         for url in urls:
-            parent_domains = set()
             domains = map(lambda x: x.lower(), self.match_sources.get_domains(url))
 
             if domains:
                 domains_in_urls.update(set(domains))
 
+            parent_domains = set()
             for domain in domains:
                 parent_domains.add(self.match_sources.get_parent_domain(domain))
             urls_blacklist.add(url) if parent_domains & blacklist else urls_valid.add(url)
 
         domains = self.match_sources.get_domains(email_body)
+        # Remove any domains that match regex
+        domains = self.match_sources.remove_domains_via_regex(domains)
         domains_valid, domains_blacklist = self.match_sources.separate_blacklisted_domains(domains)
         reportable_domains = Parser._remove_reporter_domain(domains_valid, reporter_email)
         reportable_domains.difference_update(domains_in_urls)
