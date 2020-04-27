@@ -24,7 +24,9 @@ emails = {
     'donotreply-abuse@radix.email',
     'agent@warnerbros.copyright-notice.com',
     'info@gobi.com.sg',
-    'copyright@digiturk.com.tr'
+    'copyright@digiturk.com.tr',
+    'newsletter@infomarine.net',
+    'foxnews@inbox.foxnews.com',
 }
 
 subjects = {
