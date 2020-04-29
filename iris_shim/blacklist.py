@@ -535,6 +535,9 @@ _godaddy_domains = {
 }
 
 domains = {
+    'inhope.org',
+    'cybertipline.com',
+    'iwf.org.uk',
     'virustotal.com',
     'phishtank.com',
     'arin.net',
