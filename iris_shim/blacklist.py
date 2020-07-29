@@ -7,34 +7,33 @@ The data structures here are flexible and could be lists, sets, dictionaries, et
 """
 
 emails = {
-    'francis@get.club',
+    'agent@warnerbros.copyright-notice.com',
     'arjay@get.club',
+    'copyright@digiturk.com.tr',
+    'donotreply@radix.support',
+    'donotreply-abuse@radix.email',
+    'foxnews@inbox.foxnews.com',
+    'francis@get.club',
     'incident-report@bitninja.io',
+    'info@gobi.com.sg',
     'news@portalmedestetica.com.ar',
     'newsletter@advisingnewsfinance.com',
     'newsletter@crunchbase.com',
     'newsletter@globaldata.pt',
+    'newsletter@infomarine.net',
     'newsletter@newsletter.kopp-verlag.de',
     'newsletter@nordensgodetilbudnu.com',
     'newsletter@sendmarker.com',
     'newsletter@sinun-tarjouksesi.com',
     'noreply@bluehost.com',
     'noreply@hotelexclusives.com',
-    'noreply@justdeals.com',
-    'donotreply-abuse@radix.email',
-    'agent@warnerbros.copyright-notice.com',
-    'info@gobi.com.sg',
-    'copyright@digiturk.com.tr',
-    'newsletter@infomarine.net',
-    'foxnews@inbox.foxnews.com',
+    'noreply@justdeals.com'
 }
 
 subjects = {
     '[my blog] please moderate: hello world',
-    'go daddy, llc  domain list suspended for reported abuse',
     'report of .xyz domain suspensions & unsuspensions',
     'we received your feedback',
-    'wild west domains, llc  domain list suspended for reported abuse',
     'your phishing report was received',
     'godaddy monitoring:'
 }
