@@ -1,6 +1,6 @@
 import logging
 from collections import defaultdict
-
+from ..utils.slack_integration import SlackIntegration
 from iris_shim.managers.interface import ReportManager
 
 
@@ -28,7 +28,7 @@ class CSAMReportManager(ReportManager):
         :return: A defaultdict(list) with 2 possible keys that contain a list of IRIS ID's
         """
         report_summary = defaultdict(list)
-
+        si = SlackIntegration()
         for email, reporter in reporters.iteritems():
             # Notate, but leave open invalid iris report(s)
             for iris_report in reporter.reports_invalid:
@@ -39,8 +39,11 @@ class CSAMReportManager(ReportManager):
             for iris_report in reporter.reports_reportable:
                 success, fail = self._create_abuse_report(iris_report)
                 if fail:
+
+                    si.send_message("Failed to parse iris ticket: {}".format(iris_report.report_id))
                     self._datastore.notate_report(iris_report.report_id,
                                                   self._datastore.note_csam_failed_to_submit_to_api)
+
                     report_summary['needs_investigator_review'].append(iris_report.report_id)
                 else:
                     self._datastore.notate_report_and_close(iris_report.report_id,
