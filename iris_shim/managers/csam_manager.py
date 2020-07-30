@@ -1,7 +1,9 @@
 import logging
 from collections import defaultdict
-from ..utils.slack_integration import SlackIntegration
+
 from iris_shim.managers.interface import ReportManager
+
+from ..utils.slack_integration import SlackIntegration
 
 
 class CSAMReportManager(ReportManager):
@@ -39,7 +41,6 @@ class CSAMReportManager(ReportManager):
             for iris_report in reporter.reports_reportable:
                 success, fail = self._create_abuse_report(iris_report)
                 if fail:
-
                     si.send_message("Failed to parse iris ticket: {}".format(iris_report.report_id))
                     self._datastore.notate_report(iris_report.report_id,
                                                   self._datastore.note_csam_failed_to_submit_to_api)
