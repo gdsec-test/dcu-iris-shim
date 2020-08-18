@@ -31,7 +31,7 @@ class GeneralManager(ReportManager):
         """
         report_summary = {}
 
-        for email, reporter in reporters.iteritems():
+        for email, reporter in reporters.items():
             # Check if any reports associated with a reporter was parseable and send the corresponding notice
             if not self._send_customer_interaction(reporter):
                 self._logger.error('Unable to send customer interaction for {}'.format(email))

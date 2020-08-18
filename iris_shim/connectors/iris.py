@@ -1,4 +1,4 @@
-import HTMLParser
+import html.parser
 import logging
 import os
 import re
@@ -46,11 +46,12 @@ class IrisDB:
                     for report_id, report_type, reporter_email, modify_date in data:
                         yield Report(report_id, self._service_id_mappings.get(report_type), reporter_email, modify_date)
         except Exception as e:
-            self._logger.error('Error processing query {} {}'.format(query, e.message))
+            self._logger.error('Error processing query {} {}'.format(query, e))
 
     def _get_reports(self, group_id, service_id, hours):
         """
-        Constructs a common query for interacting with the Iris backend. Callers should provide the group_id and corresponding service_id.
+        Constructs a common query for interacting with the Iris backend. Callers should provide the
+        group_id and corresponding service_id.
         :param group_id: The Iris GroupID (Integer)
         :param service_id: The corresponding Iris Service ID (Integer) for services such as phishing, malware, etc.
         :param hours: The number of hours to look back in time since now
@@ -117,16 +118,21 @@ def validate_notation(f):
 
 
 class IrisSoap:
-    _new_abuse_reports = 'New GoDaddy abuse reports should be submitted via https://supportcenter.godaddy.com/AbuseReport'
+    _new_abuse_reports = 'New GoDaddy abuse reports should be submitted via ' \
+                         'https://supportcenter.godaddy.com/AbuseReport'
 
     note_successfully_parsed = 'Do not re-open this incident.\n' \
-                               'This report has been successfully parsed by our Digital Crimes Unit (DCU) and will be processed as soon as possible.\n' \
-                               'Any action able to be taken by DCU as a result will be notated in the affected CRM shopper account at that time.\n' \
+                               'This report has been successfully parsed by our Digital Crimes Unit (DCU) and will ' \
+                               'be processed as soon as possible.\n' \
+                               'Any action able to be taken by DCU as a result will be notated in the affected CRM ' \
+                               'shopper account at that time.\n' \
                                'If you have questions please contact us in Slack (#dcueng). ' + _new_abuse_reports
 
     note_failed_to_parse = 'Do not re-open this incident.\n' \
-                           'Our Digital Crimes Unit was not able to automatically determine any valid sources of abuse and have notified the reporter.\n' \
-                           'If you believe this ticket has been closed in error please contact us in Slack (#dcueng). ' + _new_abuse_reports
+                           'Our Digital Crimes Unit was not able to automatically determine any valid sources of ' \
+                           'abuse and have notified the reporter.\n' \
+                           'If you believe this ticket has been closed in error please contact us in ' \
+                           'Slack (#dcueng). ' + _new_abuse_reports
 
     note_csam_failed_to_parse = 'Unable to parse. Leaving ticket open for Investigator review'
 
@@ -147,8 +153,7 @@ class IrisSoap:
         Please note: this method does not return the expected iris message body when used in the Dev environment
         """
         notes_text = self._client.service.GetIncidentCustomerNotes(report_id, 0)
-        h = HTMLParser.HTMLParser()
-        notes_text = h.unescape(notes_text)
+        notes_text = html.unescape(notes_text)
         # Remove any HTML markup
         p = re.compile(r'<.*?>')
         return p.sub(' ', notes_text)
@@ -187,7 +192,7 @@ class IrisSoap:
             xml_string = suds.sax.text.Raw("<ns0:IncidentId>" + str(report_id) + "</ns0:IncidentId>")
             return self._client.service.GetIncidentInfoByIncidentId(xml_string)
         except Exception as e:
-            self._logger.error('Unable to retrieve Incident Info for report {} {}'.format(report_id, e.message))
+            self._logger.error('Unable to retrieve Incident Info for report {} {}'.format(report_id, e))
 
     def _add_note_to_report(self, report_id, note):
         """
@@ -198,7 +203,7 @@ class IrisSoap:
         try:
             self._client.service.AddIncidentNote(report_id, note, 'phishtory')
         except Exception as e:
-            self._logger.error('Unable to notate report {} {}'.format(report_id, e.message))
+            self._logger.error('Unable to notate report {} {}'.format(report_id, e))
 
     def _close_report(self, report_id):
         """
@@ -208,7 +213,7 @@ class IrisSoap:
         try:
             self._client.service.QuickCloseIncident(int(report_id), 15550, )
         except Exception as e:
-            self._logger.error('Unable to close report {} {}'.format(report_id, e.message))
+            self._logger.error('Unable to close report {} {}'.format(report_id, e))
 
     @validate_notation
     def notate_report_and_close(self, report_id, note):

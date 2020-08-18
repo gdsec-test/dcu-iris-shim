@@ -3,11 +3,10 @@ import abc
 from iris_shim.models import Reporter
 
 
-class ReportManager(object):
+class ReportManager(object, metaclass=abc.ABCMeta):
     """
     Abstract base class for Report Managers for different Abuse types
     """
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, datastore, api):
         self._datastore = datastore

@@ -4,9 +4,7 @@ import logging
 import requests
 
 
-class AbuseAPI(object):
-    __metaclass__ = abc.ABCMeta
-
+class AbuseAPI(object, metaclass=abc.ABCMeta):
     def create_ticket(self, type, source, report_id, reporter_email, create_date):
         pass
 
@@ -43,7 +41,7 @@ class PhishstoryAPI(AbuseAPI):
             return response_body.get('u_number') if response_body else None
         except Exception as e:
             if type == 'CHILD_ABUSE':
-                self._logger.error('Error posting ticket for CSAM IRIS ID: {} - {}'.format(report_id, e.message))
+                self._logger.error('Error posting ticket for CSAM IRIS ID: {} - {}'.format(report_id, e))
             else:
-                self._logger.error('Error posting ticket for {} {}'.format(source, e.message))
+                self._logger.error('Error posting ticket for {} {}'.format(source, e))
             return None

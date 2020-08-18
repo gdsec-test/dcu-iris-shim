@@ -8,9 +8,7 @@ from iris_shim.managers.csam_manager import CSAMReportManager
 from iris_shim.managers.general_manager import GeneralManager
 
 
-class Handler(object):
-    __metaclass__ = abc.ABCMeta
-
+class Handler(object, metaclass=abc.ABCMeta):
     def __init__(self, app_settings):
         self._iris_soap = IrisSoap(app_settings.IRIS_WSDL)
         self._iris_db = IrisDB(app_settings.IRIS_SERVER, app_settings.IRIS_PORT, app_settings.IRIS_DATABASE,

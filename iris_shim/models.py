@@ -1,7 +1,7 @@
 import logging
-from parser import Parser
 
-import blacklist
+from . import blacklist
+from .parser import Parser
 
 
 class Report:

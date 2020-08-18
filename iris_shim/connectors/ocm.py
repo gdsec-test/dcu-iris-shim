@@ -51,7 +51,8 @@ class Mailer:
             resp = send_mail(self.hermes_successfully_parsed, {}, **kwargs)  # pass an empty dict for substitutionValues
             self._logger.info('Sent "report successfully parsed" email to reporter {}: {}'.format(reporter_email, resp))
         except Exception as e:
-            self._logger.error('Unable to send "report successfully parsed" email to reporter {}: {}'.format(reporter_email, e.message))
+            self._logger.error('Unable to send "report successfully parsed" email to reporter '
+                               '{}: {}'.format(reporter_email, e))
             return False
         return True
 
@@ -72,6 +73,6 @@ class Mailer:
             resp = send_mail(self.hermes_failed_to_parse, {}, **kwargs)  # pass an empty dict for substitutionValues
             self._logger.info('Sent "failed to parse" email to reporter {}: {}'.format(reporter_email, resp))
         except Exception as e:
-            self._logger.error('Unable to send "failed to parse" email to reporter {}: {}'.format(reporter_email, e.message))
+            self._logger.error('Unable to send "failed to parse" email to reporter {}: {}'.format(reporter_email, e))
             return False
         return True

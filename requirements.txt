@@ -1,5 +1,6 @@
-suds==0.4
+suds-py3==1.4.1.0
 pyyaml==3.12
-pyodbc==4.0.16
+pyodbc==4.0.30
 requests==2.7.0
 tld==0.12
+hermes

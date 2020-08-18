@@ -31,7 +31,7 @@ class CSAMReportManager(ReportManager):
         """
         report_summary = defaultdict(list)
         si = SlackIntegration()
-        for email, reporter in reporters.iteritems():
+        for email, reporter in reporters.items():
             # Notate, but leave open invalid iris report(s)
             for iris_report in reporter.reports_invalid:
                 self._datastore.notate_report(iris_report.report_id, self._datastore.note_csam_failed_to_parse)

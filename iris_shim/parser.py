@@ -1,6 +1,5 @@
-from utils.match_sources import MatchSources
-
 from .blacklist import domains as blacklist
+from .utils.match_sources import MatchSources
 
 
 class Parser:
@@ -23,7 +22,7 @@ class Parser:
         urls_blacklist, urls_valid, domains_in_urls = set(), set(), set()
 
         for url in urls:
-            domains = map(lambda x: x.lower(), self.match_sources.get_domains(url))
+            domains = [x.lower() for x in self.match_sources.get_domains(url)]
 
             if domains:
                 domains_in_urls.update(set(domains))
@@ -57,7 +56,7 @@ class Parser:
         :param reporter_email: Reporters email address
         :return: domain set with matching domains removed
         """
-        if not isinstance(reporter_email, basestring) or '@' not in reporter_email:
+        if not isinstance(reporter_email, str) or '@' not in reporter_email:
             return domain_list
         reporter_email_domain = reporter_email.split('@')[1]
         return {domain for domain in domain_list if not domain.endswith(reporter_email_domain)}
