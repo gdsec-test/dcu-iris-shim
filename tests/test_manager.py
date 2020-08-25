@@ -15,6 +15,11 @@ class TestReportManager:
     """Testing Methods that are shared between implementations of the Report Manager"""
 
     reporter_email = 'dcuinternal@godaddy.com'
+    esig_email = '''This email has one valid URL http://coolexample.com/phishing and shouldn't have any other. 
+                Regards,
+                Reporter phishman
+                www.shouldnotbethere.com
+                '''
 
     def __init__(self):
         self._manager = GeneralManager(MockIrisSoap(), MockMailer(), MockAbuseAPI())
@@ -57,3 +62,13 @@ class TestReportManager:
 
         assert_equal(actual_success, [('malicious-url.com', '1')])
         assert_equal(actual_fail, ['malicious-url.com/1/'])
+
+    @patch.object(MockIrisSoap, 'get_report_info_by_id', return_value=IncidentInfo('test subject'))
+    @patch.object(MockIrisSoap, 'get_customer_notes', return_value=esig_email)
+    def test_email_signature_removal(self, get_customer_notes, get_report_info_by_id):
+        self._report.sources_valid = self._report.sources_reportable = {'http://coolexample.com/phishing'}
+
+        actual = self._manager._gather_reports([self._report])
+        self._reporter.reports_reportable = [self._report]
+
+        assert_equal(actual, {self.reporter_email: self._reporter})

@@ -1,6 +1,7 @@
 import abc
 
 from iris_shim.models import Reporter
+from EmailParser import EmailParser
 
 
 class ReportManager(object, metaclass=abc.ABCMeta):
@@ -46,6 +47,7 @@ class ReportManager(object, metaclass=abc.ABCMeta):
         """
         reporters = {}  # {<reporter_email>: Reporter}
         sources_seen = set()  # {<source1>, <source2>, ...,}
+        parser = EmailParser()
 
         for report in iris_incidents:
             if report.reporter_email not in reporters:
@@ -56,6 +58,8 @@ class ReportManager(object, metaclass=abc.ABCMeta):
                 continue
 
             email_body = self._datastore.get_customer_notes(report.report_id)
+            # removing any email signatures from email_body
+            email_body = parser.remove_signature(email_body)
             report.parse(email_body)
 
             # Update report's sources_reportable to contain all sources we haven't seen and update the master list.
