@@ -4,4 +4,3 @@ pyodbc==4.0.30
 requests==2.7.0
 tld==0.12
 hermes
-EmailParser==0.21
