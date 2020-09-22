@@ -130,7 +130,7 @@ class IrisSoap:
 
     note_failed_to_parse = 'Do not re-open this incident.\n' \
                            'Our Digital Crimes Unit was not able to automatically determine any valid sources of ' \
-                           'abuse and have notified the reporter.\n' \
+                           'abuse and have notified the reporter as applicable.\n' \
                            'If you believe this ticket has been closed in error please contact us in ' \
                            'Slack (#dcueng). ' + _new_abuse_reports
 

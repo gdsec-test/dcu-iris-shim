@@ -1,6 +1,7 @@
 import logging
 
 from hermes.messenger import send_mail
+from iris_shim import blacklist
 
 
 class Mailer:
@@ -59,11 +60,15 @@ class Mailer:
     def report_failed_to_parse(self, reporter_email):
         """
         Given a reporter email, send a notice that notifies the reporter that we were unable to successfully parse
-        their report and we require more information to action their claims.
+        their report and we require more information to action their claims. This should not be sent when the reporter
+        email exists in the blacklist sets.
         :param reporter_email:
         :return:
         """
-        if not reporter_email:
+        api_reporter_domain = reporter_email.split("@")[1] if '@' in reporter_email else None
+
+        if not reporter_email or api_reporter_domain in blacklist.api_reporter_email_domains or reporter_email in \
+                blacklist.emails:
             return False
 
         kwargs = self._generate_kwargs_for_hermes()
