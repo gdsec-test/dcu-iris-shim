@@ -30,6 +30,12 @@ emails = {
     'noreply@justdeals.com'
 }
 
+api_reporter_email_domains = {
+    'netcraft.com',
+    'axur.com',
+    'fraudwatchinternational.com'
+}
+
 subjects = {
     '[my blog] please moderate: hello world',
     'report of .xyz domain suspensions & unsuspensions',

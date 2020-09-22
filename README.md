@@ -106,3 +106,28 @@ make tools   # Runs both Flake8 and isort
 
 
 The project can then be run locally by running `python run.py`
+
+## Using DEV IRIS to test functionality
+
+If you would like to create tickets in Dev Iris for testing please see the general instructions below:
+* `https://iris.int.dev-godaddy.com/` # This is the URL for accessing the Development space for IRIS
+* Once on the landing page you can click on the `Incidents` button at the top and choose `New` from the dropdown menu
+* There will be a `Summary` box for the intended Subject Line.
+* Below that is another box titled `New Note`, this where the message body goes.
+* `Incident Information` is the left panel, this is where you'll select the desired ticket settings.
+```
+For example, to create a GoDaddy Phishing ticket you would choose the following from the associated dropdown options:
+Company: Go Daddy
+Type: DS-Abuse
+From: Use Default
+Service: Phishing
+Category: New
+Assign To: CSIRT-CSA
+
+You can choose to enter a shopper account number into the `Shopper ID` field or choose `No shopper` in the checkbox
+Email:  #This field should be whatever email address you prefer
+
+Click `Save`
+```
+
+Note: The email address for DEV Iris is `devabuse@godaddy.com` but we are unable to send to this address through standard means.

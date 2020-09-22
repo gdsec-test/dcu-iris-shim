@@ -42,8 +42,12 @@ class Report:
         Perform basic validation on this report before attempting to parse the report itself.
         This should filter out reports that are submitted by spammers, known bad subjects, etc.
         """
-        if self.reporter_email in blacklist.emails or self._find_blacklist_subject_in_email_subject(email_subject):
+        api_reporter_domain = self.reporter_email.split("@")[1] if '@' in self.reporter_email else None
+
+        if api_reporter_domain in blacklist.api_reporter_email_domains or self.reporter_email in blacklist.emails or \
+                self._find_blacklist_subject_in_email_subject(email_subject):
             self.valid, self.invalid_reason = False, 'blacklist'
+
         return self.valid
 
     def parse(self, email_body):

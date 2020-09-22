@@ -17,6 +17,10 @@ class TestReport(object):
         self._report2 = Report('1237', 'NETWORK_ABUSE', 'test@theaaronbean.com', datetime(2017, 11, 29, 8, 38, 47, 420000))
         self._report3 = Report('1238', 'CONTENT', 'test@theaaronbean.com', datetime(2017, 11, 29, 8, 38, 47, 420000))
         self._report4 = Report('1239', 'SPAM', 'donotreply@radix.support', datetime(2020, 7, 27, 1, 2, 3, 420000))
+        self._report5 = Report('1240', 'PHISHING', 'takedown-response+10967219@netcraft.com',
+                               datetime(2020, 8, 18, 1, 2, 3, 420000))
+        self._report6 = Report('1241', 'PHISHING', 'not.a.real.email.com', datetime(2020, 8, 26, 1, 2, 3, 420000))
+        self._report7 = Report('1242', 'PHISHING', '', datetime(2020, 8, 26, 1, 2, 3, 420000))  # email not provided
 
     def test_validate_blacklist_reporter(self):
         self._report.reporter_email = next(iter(emails))  # generic retrieval of a blacklist email
@@ -27,9 +31,19 @@ class TestReport(object):
 
     def test_validate_blacklist_email_address(self):
         self._report4.validate(self.VALID)
+        self._report5.validate(self.VALID)
 
         assert_false(self._report4.valid)
         assert_equal(self._report4.invalid_reason, self.BLACKLIST)
+
+        assert_false(self._report5.valid)
+        assert_equal(self._report5.invalid_reason, self.BLACKLIST)
+
+        assert_true(self._report6.valid)
+        assert_equal(self._report6.invalid_reason, None)
+
+        assert_true(self._report7.valid)
+        assert_equal(self._report7.invalid_reason, None)
 
     def test_validate_blacklist_full_subject(self):
         self._report.validate('we received your feedback')
