@@ -8,7 +8,6 @@ from functools import wraps
 import pyodbc
 import suds
 import suds.client
-
 from iris_shim.models import Report
 from settings import config_by_name
 
