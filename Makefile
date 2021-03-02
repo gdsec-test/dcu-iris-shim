@@ -6,7 +6,7 @@ BUILD_BRANCH=origin/master
 SHELL=/bin/bash
 
 # libraries we need to stage for pip to install inside Docker build
-PRIVATE_PIPS="git@github.secureserver.net:digital-crimes/hermes.git;bbb9c9125064a7636412f1176a9a40cddfbd3030"
+PRIVATE_PIPS="git@github.secureserver.net:digital-crimes/hermes.git"
 
 all: env
 
