@@ -1,8 +1,9 @@
 import logging
 import re
 
-from iris_shim import blacklist
 from tld import get_fld, get_tld
+
+from iris_shim import blacklist
 
 
 class MatchSources:
