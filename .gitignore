@@ -9,3 +9,5 @@ venv/
 *.crt
 *.out
 *.bak*
+.venv/
+.noseids

@@ -3,4 +3,4 @@
 # W504 line break after binary operator
 ignore = E501, W504
 
-exclude = venv
+exclude = venv, .venv
