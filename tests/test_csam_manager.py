@@ -6,6 +6,7 @@ from nose.tools import assert_equal
 
 from iris_shim.managers.csam_manager import CSAMReportManager
 from iris_shim.models import Report, Reporter
+from iris_shim.utils.slack_integration import SlackIntegration
 from tests.test_mocks import MockAbuseAPI, MockIrisSoap
 
 IncidentInfo = namedtuple('IncidentInfo', 'Subject')
@@ -42,10 +43,11 @@ class TestCSAMReportManager:
         assert_equal(actual.get('successfully_submitted_to_api'), report_summary.get('successfully_submitted_to_api'))
         assert_equal(actual.get('needs_investigator_review'), report_summary.get('needs_investigator_review'))
 
+    @patch.object(SlackIntegration, 'send_message')
     @patch.object(MockIrisSoap, 'notate_report')
     @patch.object(CSAMReportManager, '_create_abuse_report',
                   side_effect=[([()], ['needs-review.com', 'also-needs-review.com'])])
-    def test_action_csam_reports_fail(self, _create_abuse_report, notate_report):
+    def test_action_csam_reports_fail(self, _create_abuse_report, notate_report, slack_mock):
         self._csam_report.sources_reportable = ['needs-review.com', 'also-needs-review.com']
         self._reporter.reports_reportable = [self._csam_report]
 

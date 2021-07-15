@@ -62,6 +62,11 @@ spec:
                     secretKeyRef:
                       name: auth-abuse-api-iris-shim
                       key: secret
+                - name: SLACK_HANDLER
+                  valueFrom:
+                    secretKeyRef:
+                      name: iris-shim-slack
+                      key: handler
 
                 - name: OCM_CERT
                   value: /ocm_certs/tls.crt
