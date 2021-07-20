@@ -1,5 +1,5 @@
 FROM python:3-alpine
-MAINTAINER DCU ENG <DCUEng@godaddy.com>
+LABEL MAINTAINER="dcueng@godaddy.com"
 
 
 RUN addgroup -S dcu && adduser -H -S -G dcu dcu
@@ -13,13 +13,7 @@ COPY . /tmp/
 
 RUN chown -R dcu:dcu /app
 
-# pip install private pips staged by Makefile
-RUN for entry in hermes; \
-    do \
-    pip install --compile "/tmp/private_pips/$entry"; \
-done
-
-RUN pip install --compile /tmp && rm -rf /tmp/*
+RUN PIP_CONFIG_FILE=/tmp/pip_config/pip.conf pip install --compile /tmp && rm -rf /tmp/*
 WORKDIR /app
 
 RUN echo -en "[FreeTDS]\n\
