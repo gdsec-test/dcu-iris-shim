@@ -6,6 +6,7 @@ from iris_shim.connectors.iris import IrisDB, IrisSoap
 from iris_shim.connectors.ocm import Mailer
 from iris_shim.managers.csam_manager import CSAMReportManager
 from iris_shim.managers.general_manager import GeneralManager
+from settings import AppConfig
 
 
 class Handler(object, metaclass=abc.ABCMeta):
@@ -20,9 +21,9 @@ class Handler(object, metaclass=abc.ABCMeta):
 
 
 class Phishing(Handler):
-    def __init__(self, app_settings):
+    def __init__(self, app_settings: AppConfig):
         super(Phishing, self).__init__(app_settings)
-        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
+        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.SSO_URL, app_settings.SSO_USER, app_settings.SSO_PASSWORD, app_settings.ABUSE_REPORTER)
         self._mailer = Mailer(os.getenv('sysenv', 'dev'), app_settings.OCM_CERT, app_settings.OCM_KEY, app_settings.NON_PROD_EMAIL)
 
     def run(self):
@@ -40,7 +41,7 @@ class Phishing(Handler):
 class NetworkAbuse(Handler):
     def __init__(self, app_settings):
         super(NetworkAbuse, self).__init__(app_settings)
-        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
+        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.SSO_URL, app_settings.SSO_USER, app_settings.SSO_PASSWORD, app_settings.ABUSE_REPORTER)
         self._mailer = Mailer(os.getenv('sysenv', 'dev'), app_settings.OCM_CERT, app_settings.OCM_KEY, app_settings.NON_PROD_EMAIL)
 
     def run(self):
@@ -58,7 +59,7 @@ class NetworkAbuse(Handler):
 class Malware(Handler):
     def __init__(self, app_settings):
         super(Malware, self).__init__(app_settings)
-        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
+        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.SSO_URL, app_settings.SSO_USER, app_settings.SSO_PASSWORD, app_settings.ABUSE_REPORTER)
         self._mailer = Mailer(os.getenv('sysenv', 'dev'), app_settings.OCM_CERT, app_settings.OCM_KEY, app_settings.NON_PROD_EMAIL)
 
     def run(self):
@@ -76,7 +77,7 @@ class Malware(Handler):
 class CSAM(Handler):
     def __init__(self, app_settings):
         super(CSAM, self).__init__(app_settings)
-        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.API_KEY, app_settings.API_SECRET)
+        self._api = PhishstoryAPI(app_settings.ABUSE_API_URL, app_settings.SSO_URL, app_settings.SSO_USER, app_settings.SSO_PASSWORD, app_settings.ABUSE_REPORTER)
 
     def run(self):
         """

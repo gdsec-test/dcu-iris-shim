@@ -52,16 +52,16 @@ spec:
                     secretKeyRef:
                       name: db-iris-shimv2
                       key: password
-                - name: API_KEY
+                - name: SSO_USER
                   valueFrom:
                     secretKeyRef:
-                      name: auth-abuse-api-iris-shim
-                      key: key
-                - name: API_SECRET
+                      name: abuse-api-user
+                      key: username
+                - name: SSO_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: auth-abuse-api-iris-shim
-                      key: secret
+                      name: abuse-api-user
+                      key: password
                 - name: SLACK_HANDLER
                   valueFrom:
                     secretKeyRef:
