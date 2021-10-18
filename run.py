@@ -4,7 +4,7 @@ from logging.config import dictConfig
 
 import yaml
 
-from iris_shim.handlers import CSAM, Malware, Phishing
+from iris_shim.handlers import CSAM
 from settings import config_by_name
 
 app_settings = config_by_name[os.getenv('sysenv', 'dev')]()
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == '__main__':
-    supported_drivers = [Phishing(app_settings), Malware(app_settings), CSAM(app_settings)]
+    supported_drivers = [CSAM(app_settings)]
 
     for driver in supported_drivers:
         driver.run()

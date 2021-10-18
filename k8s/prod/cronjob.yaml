@@ -45,12 +45,12 @@ spec:
                 - name: IRIS_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: db-iris-shim
+                      name: db-iris-shimv2
                       key: username
                 - name: IRIS_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: db-iris-shim
+                      name: db-iris-shimv2
                       key: password
                 - name: API_KEY
                   valueFrom:
