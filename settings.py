@@ -18,7 +18,7 @@ class AppConfig(object):
 
     NON_PROD_EMAIL = os.getenv('EMAIL_RECIPIENT', 'dcuinternal@godaddy.com')
 
-    ABUSE_API_URL = "http://api.abuse-api-dev.svc.cluster.local:5000/v1/abuse/tickets"
+    ABUSE_API_URL = "https://abuse.api.int.dev-godaddy.com/v1/abuse/tickets"
     SSO_URL = 'https://sso.dev-godaddy.com'
     SSO_USER = os.getenv('SSO_USER', 'user')
     SSO_PASSWORD = os.getenv('SSO_PASSWORD', 'password')
@@ -44,7 +44,7 @@ class ProductionAppConfig(AppConfig):
     IRIS_GROUP_ID_CSA = 443
     IRIS_GROUP_ID_OPS_DIGITAL_CRIMES = 409
 
-    ABUSE_API_URL = "http://api.abuse-api-prod.svc.cluster.local:5000/v1/abuse/tickets"
+    ABUSE_API_URL = "https://abuse.api.int.godaddy.com/v1/abuse/tickets"
     ABUSE_REPORTER = '6d8f4f01-65f0-49f3-8925-bf319570b860'
 
     NON_PROD_EMAIL = None
@@ -65,7 +65,7 @@ class DevelopmentAppConfig(AppConfig):
     IRIS_GROUP_ID_CSA = 510
     IRIS_GROUP_ID_OPS_DIGITAL_CRIMES = 510
 
-    ABUSE_API_URL = "http://api.abuse-api-dev.svc.cluster.local:5000/v1/abuse/tickets"
+    ABUSE_API_URL = "https://abuse.api.int.dev-godaddy.com/v1/abuse/tickets"
     ABUSE_REPORTER = '99d33f59-fb05-4c4c-b798-5a5ee52c4a1d'
     SSO_URL = 'https://sso.dev-godaddy.com'
 
